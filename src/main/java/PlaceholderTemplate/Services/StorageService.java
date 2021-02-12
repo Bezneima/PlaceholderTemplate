@@ -11,27 +11,26 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class StorageService {
     @Value("${upload.path}")
     private String path;
+    private static final Logger log = LoggerFactory.getLogger(StorageService.class);
 
     public void uploadFile(MultipartFile file) {
-
         if (file.isEmpty()) {
-
             throw new StorageException("Failed to store empty file");
         }
 
         try {
             String fileName = file.getOriginalFilename();
             InputStream is = file.getInputStream();
-            Files.copy(is, Paths.get(fileName),StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(is, Paths.get(path+fileName),StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-
-            String msg = String.format("Failed to store file %f", file.getName());
-
-            throw new StorageException(msg, e);
+            log.error("Failed to store file:{}",file.getName(),e);
         }
     }
 }
