@@ -1,27 +1,27 @@
-package PlaceholderTemplate;
+package PlaceholderTemplate.RestControllers;
 
 
 
 import PlaceholderTemplate.Exceptions.StorageException;
 import PlaceholderTemplate.Services.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class FileUploadController {
 
-    @Autowired
-    private StorageService storageService;
+    private final StorageService storageService;
+
+    public FileUploadController(@Autowired StorageService storageService) {
+        this.storageService = storageService;
+    }
 
     @GetMapping(
             value = "/get-file",
@@ -32,16 +32,11 @@ public class FileUploadController {
 
     }
 
-    @RequestMapping(value = "/doUpload", method = RequestMethod.POST,
+    @RequestMapping(value = "/upload", method = RequestMethod.POST,
             consumes = {"multipart/form-data"})
     public String upload(@RequestParam MultipartFile file) {
         storageService.uploadFile(file);
-        return "redirect:/success.html";
-    }
-
-    @RequestMapping(value = "/")
-    public String index(){
-        return "redirect:/index.html";
+        return "200";
     }
 
     @ExceptionHandler(StorageException.class)
