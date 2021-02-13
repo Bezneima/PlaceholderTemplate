@@ -24,7 +24,9 @@ public class StorageService {
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file");
         }
-
+        if(!isDoc(file)){
+            throw new StorageException("Wrong format!");
+        }
         try {
             String fileName = file.getOriginalFilename();
             InputStream is = file.getInputStream();
@@ -32,5 +34,17 @@ public class StorageService {
         } catch (IOException e) {
             log.error("Failed to store file:{}",file.getName(),e);
         }
+    }
+    public boolean isDoc(MultipartFile file) {
+        String fileFormat = "";
+        String fileName = file.getOriginalFilename();
+        try {
+            if (fileName.contains(".")) {
+                fileFormat = fileName.substring(fileName.lastIndexOf(".") + 1);
+            }
+        } catch (NullPointerException e){
+            log.error("Missing file extension:{}", fileFormat, e);
+        }
+        return fileFormat.equals("doc");
     }
 }
