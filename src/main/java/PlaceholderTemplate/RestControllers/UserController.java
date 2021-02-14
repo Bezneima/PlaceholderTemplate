@@ -11,15 +11,22 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public String authorization(@RequestParam MultipartFile file) {
-        return "200";
+    @RequestMapping(value = "/auth", method = RequestMethod.GET)
+    public String authorization(@RequestParam String login, @RequestParam String password) {
+        UserService userService = new UserService();
+        return userService.getToken(login, password);
+    }
+
+    @RequestMapping(value = "/checkAuthToken",method = RequestMethod.POST)
+    public boolean checkAuthToken(String login,String token){
+        UserService userService = new UserService();
+        return userService.checkToken(login, token);
     }
 
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)
-    public String addUser(@RequestParam String userName,@RequestParam String role) {
+    public String addUser(@RequestParam String userName, @RequestParam String role) {
         UserService userService = new UserService();
-        User user = new User(role,userName);
+        User user = new User(role, userName);
         userService.saveUser(user);
         return "200";
     }

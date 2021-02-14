@@ -25,6 +25,7 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.28.Final'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.5'
 }
 
 test {

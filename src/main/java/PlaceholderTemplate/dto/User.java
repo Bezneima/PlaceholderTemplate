@@ -1,6 +1,7 @@
 package PlaceholderTemplate.dto;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -18,6 +19,8 @@ public class User {
     private String password;
     @Column(name = "last_user_token")
     private String lastUserToken;
+    @Column(name = "token_created_at")
+    private java.time.LocalDateTime tokenCreatedAt;
 
     public User(String role, String userName) {
         this.role = role;
@@ -66,5 +69,13 @@ public class User {
 
     public void setLastUserToken(String lastUserToken) {
         this.lastUserToken = lastUserToken;
+    }
+
+    public LocalDateTime getTokenCreatedAt() {
+        return tokenCreatedAt;
+    }
+
+    public void setTokenCreatedAt(LocalDateTime tokenCreatedAt) {
+        this.tokenCreatedAt = tokenCreatedAt;
     }
 }
