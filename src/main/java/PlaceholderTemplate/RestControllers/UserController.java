@@ -27,8 +27,8 @@ public class UserController {
     public String addUser(@RequestParam String userName, @RequestParam String role) {
         UserService userService = new UserService();
         User user = new User(role, userName);
-        userService.saveUser(user);
-        return "200";
+        /*userService.saveUser(user);*/
+        return userService.saveUser(user);
     }
 
 
