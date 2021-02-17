@@ -3,6 +3,7 @@ package PlaceholderTemplate.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileWriter;
@@ -13,9 +14,11 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-
 public class FileUtils {
+    @Value("${upload.path}")
+    private static String systemUploadFolder;
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+
     public static void writeFileToResourses(String filename,FileFormat fileFormat) throws IOException {
         FileWriter fileWriter = new FileWriter("src/main/resources/"+filename+fileFormat);
         PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -35,14 +38,16 @@ public class FileUtils {
         return null;
     }
     public static void CheckOrMakePath(String foldersChain){
-        String path = "uploads";
+        /*String path = "uploads/";*/
+        String url = systemUploadFolder;
+        System.out.println(systemUploadFolder);
         for(String folder : foldersChain.split("/")) {
-            path = path + "/"  + folder;
-            if(!Files.exists(Paths.get(path))){
+            url = url  + folder + "/";
+            if(!Files.exists(Paths.get(url))){
                 try {
-                    Files.createDirectory(Paths.get(path));
+                    Files.createDirectory(Paths.get(url));
                 } catch (IOException e){
-                    log.error("Empty path: {}", path, e);
+                    log.error("Empty path: {}", url, e);
                 }
             }
         }
