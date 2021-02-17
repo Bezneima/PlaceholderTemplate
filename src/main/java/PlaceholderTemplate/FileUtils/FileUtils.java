@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 
 public class FileUtils {
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
@@ -30,5 +33,18 @@ public class FileUtils {
             log.error("I can not read the file", e);
         }
         return null;
+    }
+    public static void CheckOrMakePath(String foldersChain){
+        String path = "uploads";
+        for(String folder : foldersChain.split("/")) {
+            path = path + "/"  + folder;
+            if(!Files.exists(Paths.get(path))){
+                try {
+                    Files.createDirectory(Paths.get(path));
+                } catch (IOException e){
+                    log.error("Empty path: {}", path, e);
+                }
+            }
+        }
     }
 }
