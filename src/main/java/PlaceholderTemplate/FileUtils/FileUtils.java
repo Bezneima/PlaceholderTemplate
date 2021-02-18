@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+@Service
 public class FileUtils {
     @Value("${upload.path}")
     private static String systemUploadFolder;
@@ -38,18 +40,20 @@ public class FileUtils {
         return null;
     }
     public static void CheckOrMakePath(String foldersChain){
-        /*String path = "uploads/";*/
-        String url = systemUploadFolder;
-        System.out.println(systemUploadFolder);
-        for(String folder : foldersChain.split("/")) {
-            url = url  + folder + "/";
-            if(!Files.exists(Paths.get(url))){
-                try {
-                    Files.createDirectory(Paths.get(url));
-                } catch (IOException e){
-                    log.error("Empty path: {}", url, e);
+        //String path = "uploads/";
+        StringBuilder url = new StringBuilder();
+        //url.append(path);
+        url.append(systemUploadFolder);
+        try {
+            for(String folder : foldersChain.split("/")) {
+                url.append(folder).append("/");
+                if(!Files.exists(Paths.get(url.toString()))){
+                        Files.createDirectory(Paths.get(url.toString()));
                 }
             }
+        } catch (IOException e){
+            log.error("Creating path error: {}", foldersChain, e);
         }
+
     }
 }
