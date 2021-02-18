@@ -1,7 +1,6 @@
 package PlaceholderTemplate.RestControllers;
 
 
-
 import PlaceholderTemplate.Exceptions.StorageException;
 import PlaceholderTemplate.Services.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,19 +33,22 @@ public class FileUploadController {
 
     }
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST,
-            consumes = {"multipart/form-data"})
-    public String upload(@RequestParam MultipartFile file) {
-        storageService.uploadFile(file);
-        return "200";
+    @RequestMapping(
+            value = "/upload",
+            method = RequestMethod.POST,
+            consumes = {"multipart/form-data"}
+    )
+    public String upload(@RequestParam MultipartFile file//,
+                         //@RequestParam String UploadeUserName,
+                         //@RequestParam boolean isTemplate
+    ) {
+        return storageService.uploadFileToGroup(file,"1",true);
     }
 
     @ExceptionHandler(StorageException.class)
     public String handleStorageFileNotFound(StorageException e) {
         return "redirect:/failure.html";
     }
-
-
 
 
 }

@@ -7,10 +7,12 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
 
+@Component
 public class UserDao {
     private static final Logger log = LoggerFactory.getLogger(UserDao.class);
 

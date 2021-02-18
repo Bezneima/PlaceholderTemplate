@@ -17,8 +17,6 @@ import java.nio.file.Paths;
 
 @Service
 public class FileUtils {
-    @Value("${upload.path}")
-    private static String systemUploadFolder;
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
 
     public static void writeFileToResourses(String filename,FileFormat fileFormat) throws IOException {
@@ -39,11 +37,9 @@ public class FileUtils {
         }
         return null;
     }
+
     public static void CheckOrMakePath(String foldersChain){
-        //String path = "uploads/";
-        StringBuilder url = new StringBuilder();
-        //url.append(path);
-        url.append(systemUploadFolder);
+        StringBuilder url = new StringBuilder("uploads/");
         try {
             for(String folder : foldersChain.split("/")) {
                 url.append(folder).append("/");
