@@ -1,6 +1,13 @@
 package PlaceholderTemplate.Services;
 
+import PlaceholderTemplate.Dao.DocFilesDao;
+import PlaceholderTemplate.Dao.TemplateFilesDao;
+import PlaceholderTemplate.Dao.UserDao;
 import PlaceholderTemplate.Exceptions.StorageException;
+import PlaceholderTemplate.dto.DocFiles;
+import PlaceholderTemplate.dto.TemplateFiles;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,28 +24,66 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static PlaceholderTemplate.FileUtils.FileUtils.CheckOrMakePath;
+
 @Service
 public class StorageService {
     @Value("${upload.path}")
-    private String path;
+    private String uploadsPath;
+    private final UserDao usersDao;
+    private final TemplateFilesDao templateFilesDao;
+    private final DocFilesDao docFilesDao;
     private static final Logger log = LoggerFactory.getLogger(StorageService.class);
 
+    StorageService(@Autowired UserDao userDao,
+                   @Autowired DocFilesDao docFilesDao,
+                   @Autowired TemplateFilesDao templateFilesDao){
+        this.usersDao = userDao;
+        this.docFilesDao = docFilesDao;
+        this.templateFilesDao = templateFilesDao;
+    }
 
-    public void uploadFile(MultipartFile file) {
+    public String uploadFileToGroup(MultipartFile file, String UploadeGroupId, boolean isTemplate) {
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file");
         }
-        if(!IsValidDocumentFormat(file)){
+        /* TODO Потом убрать комментарий
+        if (!IsValidDocumentFormat(file)) {
             throw new StorageException("Wrong format!");
+            return "Wrong format!";
         }
-        try {
-            String fileName = file.getOriginalFilename();
-            InputStream is = file.getInputStream();
-            Files.copy(is, Paths.get(path+fileName),StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            log.error("Failed to store file:{}",file.getName(),e);
+        */
+        StringBuilder stringBuilder = new StringBuilder(UploadeGroupId);
+        String md5CashedName = DigestUtils.md5Hex(
+                stringBuilder
+                        .append(file.getOriginalFilename())
+                        .append(java.util.Calendar.getInstance().getTime().toString()).toString()).toUpperCase();
+        StringBuilder finalFilePathStringBuilder = new StringBuilder("");
+        if (!isTemplate) {
+            finalFilePathStringBuilder.append("group/").append(UploadeGroupId).append("/docs");
+            DocFiles docFiles = new DocFiles(
+                    UploadeGroupId,
+                    file.getOriginalFilename(),
+                    finalFilePathStringBuilder.toString(),
+                    "FileFormat",
+                    md5CashedName
+            );
+            docFilesDao.save(docFiles);
+        } else {
+            finalFilePathStringBuilder.append("group/").append(UploadeGroupId).append("/templates");
+            TemplateFiles templateFile = new TemplateFiles(
+                    UploadeGroupId,
+                    file.getOriginalFilename(),
+                    finalFilePathStringBuilder.toString(),
+                    "FileFormat",
+                    md5CashedName
+            );
+            templateFilesDao.save(templateFile);
         }
+        writeFileToPath(file, finalFilePathStringBuilder.toString(), md5CashedName);
+        return "File was uploaded";
     }
+
     public boolean IsValidDocumentFormat(MultipartFile file) {
         String formatsStr;
         String fileName = file.getOriginalFilename();
@@ -46,10 +91,9 @@ public class StorageService {
         formatsStr = Arrays.toString(FileFormat.values());
         String[] formats = formatsStr.replace("[", "").replace("]", "").
                 split(". ");
-
         boolean isValid = false;
-
         try {
+            assert fileName != null;
             if (fileName.contains(".")) {
                 formatOfFile = fileName.substring(fileName.lastIndexOf(".") + 1);
             }
@@ -61,5 +105,15 @@ public class StorageService {
             if (formatOfFile.equals(format.toLowerCase())) isValid = true;
         }
         return isValid;
+    }
+
+    public void writeFileToPath(MultipartFile file, String relativePath, String fileName) {
+        try {
+            CheckOrMakePath(relativePath);
+            InputStream is = file.getInputStream();
+            Files.copy(is, Paths.get(uploadsPath+relativePath+"/"+fileName), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.error("Failed to store file:{}", file.getName(), e);
+        }
     }
 }

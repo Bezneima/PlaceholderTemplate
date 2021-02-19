@@ -1,5 +1,7 @@
 package PlaceholderTemplate;
 
+import PlaceholderTemplate.dto.DocFiles;
+import PlaceholderTemplate.dto.TemplateFiles;
 import PlaceholderTemplate.dto.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -13,6 +15,8 @@ public class HibernateSessionFactoryUtil {
             try {
                 Configuration configuration = new Configuration().configure();
                 configuration.addAnnotatedClass(User.class);
+                configuration.addAnnotatedClass(DocFiles.class);
+                configuration.addAnnotatedClass(TemplateFiles.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 
