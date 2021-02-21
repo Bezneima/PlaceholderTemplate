@@ -4,16 +4,23 @@ import PlaceholderTemplate.Dao.DocFilesDao;
 import PlaceholderTemplate.Dao.TemplateFilesDao;
 import PlaceholderTemplate.Dao.UserDao;
 import PlaceholderTemplate.Exceptions.StorageException;
+import PlaceholderTemplate.FileUtils.MediaTypeUtils;
 import PlaceholderTemplate.dto.DocFiles;
 import PlaceholderTemplate.dto.TemplateFiles;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import PlaceholderTemplate.FileUtils.FileFormat;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -24,10 +31,14 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContext;
+
 import static PlaceholderTemplate.FileUtils.FileUtils.CheckOrMakePath;
 
 @Service
 public class StorageService {
+    @Autowired
+    private ServletContext servletContext;
     @Value("${upload.path}")
     private String uploadsPath;
     private final UserDao usersDao;
@@ -37,7 +48,7 @@ public class StorageService {
 
     StorageService(@Autowired UserDao userDao,
                    @Autowired DocFilesDao docFilesDao,
-                   @Autowired TemplateFilesDao templateFilesDao){
+                   @Autowired TemplateFilesDao templateFilesDao) {
         this.usersDao = userDao;
         this.docFilesDao = docFilesDao;
         this.templateFilesDao = templateFilesDao;
@@ -111,9 +122,36 @@ public class StorageService {
         try {
             CheckOrMakePath(relativePath);
             InputStream is = file.getInputStream();
-            Files.copy(is, Paths.get(uploadsPath+relativePath+"/"+fileName), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(is, Paths.get(uploadsPath + relativePath + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             log.error("Failed to store file:{}", file.getName(), e);
+        }
+    }
+
+
+    public ResponseEntity<InputStreamResource> downloadFile(String groupName, boolean isTemplate, String fileName) throws IOException {
+        try {
+            MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileName);
+            StringBuilder stringBuilder = new StringBuilder("uploads/group/");
+            if (isTemplate)
+                stringBuilder.append(groupName).append("/templates/").append(fileName);
+            else
+                stringBuilder.append(groupName).append("/docs/").append(fileName);
+            File file = new File(stringBuilder.toString());
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName)
+                    .contentType(mediaType)
+                    .contentLength(file.length())
+                    .body(resource);
+        } catch (IOException ioException) {
+            log.error("error while download file with fileName={} isTemplate={} groupName={}",
+                    fileName,
+                    isTemplate,
+                    groupName,
+                    ioException
+            );
+            throw new IOException(ioException);
         }
     }
 }

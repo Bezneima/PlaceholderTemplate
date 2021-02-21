@@ -4,6 +4,8 @@ package PlaceholderTemplate.RestControllers;
 import PlaceholderTemplate.Exceptions.StorageException;
 import PlaceholderTemplate.Services.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/files")
 public class FileUploadController {
 
     private final StorageService storageService;
@@ -25,12 +28,11 @@ public class FileUploadController {
     }
 
     @GetMapping(
-            value = "/get-file",
+            value = "/download",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
-    public @ResponseBody
-    void getFile() throws IOException {
-
+    public ResponseEntity<InputStreamResource> downloadFile() throws IOException {
+        return storageService.downloadFile("1",true,"contractors.conf");
     }
 
     @RequestMapping(
@@ -38,11 +40,11 @@ public class FileUploadController {
             method = RequestMethod.POST,
             consumes = {"multipart/form-data"}
     )
-    public String upload(@RequestParam MultipartFile file//,
-                         //@RequestParam String UploadeUserName,
-                         //@RequestParam boolean isTemplate
+    public String upload(@RequestParam MultipartFile file,
+                         @RequestParam String UploadedGroup,
+                         @RequestParam boolean isTemplate
     ) {
-        return storageService.uploadFileToGroup(file,"1",true);
+        return storageService.uploadFileToGroup(file,UploadedGroup,isTemplate);
     }
 
     @ExceptionHandler(StorageException.class)
