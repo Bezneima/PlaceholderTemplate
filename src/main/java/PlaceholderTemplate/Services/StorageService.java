@@ -3,10 +3,12 @@ package PlaceholderTemplate.Services;
 import PlaceholderTemplate.Dao.DocFilesDao;
 import PlaceholderTemplate.Dao.TemplateFilesDao;
 import PlaceholderTemplate.Dao.UserDao;
+import PlaceholderTemplate.DocxWorker;
 import PlaceholderTemplate.Exceptions.StorageException;
 import PlaceholderTemplate.FileUtils.MediaTypeUtils;
 import PlaceholderTemplate.dto.DocFiles;
 import PlaceholderTemplate.dto.TemplateFiles;
+import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,14 +75,26 @@ public class StorageService {
         StringBuilder finalFilePathStringBuilder = new StringBuilder("");
         if (!isTemplate) {
             finalFilePathStringBuilder.append("group/").append(UploadeGroupId).append("/docs");
-            DocFiles docFiles = new DocFiles(
-                    UploadeGroupId,
-                    file.getOriginalFilename(),
-                    finalFilePathStringBuilder.toString(),
-                    "FileFormat",
-                    md5CashedName
-            );
-            docFilesDao.save(docFiles);
+            try {
+                writeFileToPath(file, finalFilePathStringBuilder.toString(), md5CashedName);
+                List<String> allFileInputFieldsName = DocxWorker.getAllInputFieldsName("uploads/"+finalFilePathStringBuilder.toString() + "/" + md5CashedName);
+                Gson gson = new Gson();
+                String allFileInputFieldsNameJson = gson.toJson(allFileInputFieldsName);
+                DocFiles docFiles = new DocFiles(
+                        UploadeGroupId,
+                        file.getOriginalFilename(),
+                        finalFilePathStringBuilder.toString(),
+                        "FileFormat",
+                        md5CashedName,
+                        allFileInputFieldsNameJson
+                );
+                docFilesDao.save(docFiles);
+            } catch (Exception e) {
+                log.error("Error while getAllInputFieldsName({})",
+                        finalFilePathStringBuilder.append("/").append(md5CashedName).toString(),
+                        e);
+                return "Error while getting ${X} fields name(x)";
+            }
         } else {
             finalFilePathStringBuilder.append("group/").append(UploadeGroupId).append("/templates");
             TemplateFiles templateFile = new TemplateFiles(
@@ -90,8 +105,9 @@ public class StorageService {
                     md5CashedName
             );
             templateFilesDao.save(templateFile);
+            writeFileToPath(file, finalFilePathStringBuilder.toString(), md5CashedName);
         }
-        writeFileToPath(file, finalFilePathStringBuilder.toString(), md5CashedName);
+
         return "File was uploaded";
     }
 
