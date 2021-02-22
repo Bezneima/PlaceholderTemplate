@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/files")
-public class FileUploadController {
+public class FileController {
 
     private final StorageService storageService;
 
-    public FileUploadController(@Autowired StorageService storageService) {
+    public FileController(@Autowired StorageService storageService) {
         this.storageService = storageService;
     }
 
@@ -32,7 +32,14 @@ public class FileUploadController {
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     public ResponseEntity<InputStreamResource> downloadFile() throws IOException {
-        return storageService.downloadFile("1",true,"contractors.conf");
+        return storageService.downloadFile("1",true,"someFile");
+    }
+
+    @GetMapping(
+            value = "/getFileInputFields"
+    )
+    public String getFileInputFields(@RequestParam String fileMd5Hash) {
+        return storageService.getFileInputFields(fileMd5Hash);
     }
 
     @RequestMapping(

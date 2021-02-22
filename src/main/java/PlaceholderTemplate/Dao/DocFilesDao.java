@@ -4,9 +4,12 @@ import PlaceholderTemplate.HibernateSessionFactoryUtil;
 import PlaceholderTemplate.dto.DocFiles;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class DocFilesDao {
@@ -22,6 +25,20 @@ public class DocFilesDao {
         session.save(DocFiles);
         transaction.commit();
         session.close();
+    }
+
+    public String getFileInputFields(String fileMd5Hash) {
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            Query query = session.createQuery("from DocFiles where fileHashName = '" + fileMd5Hash + "'");
+            List<DocFiles> docFile = query.list();
+            if(docFile.size()>0)
+                return docFile.get(0).getInputFieldsNames();
+            else
+                return "[]";
+        } catch (Exception e) {
+            log.error("Some fails with finding docFile with fileMd5Hash = {}", fileMd5Hash, e);
+            return null;
+        }
     }
 
     /*

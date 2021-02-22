@@ -170,4 +170,8 @@ public class StorageService {
             throw new IOException(ioException);
         }
     }
+
+    public String getFileInputFields(String fileMd5Hash){
+        return docFilesDao.getFileInputFields(fileMd5Hash);
+    }
 }
