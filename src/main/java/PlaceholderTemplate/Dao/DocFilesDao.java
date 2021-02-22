@@ -23,4 +23,20 @@ public class DocFilesDao {
         transaction.commit();
         session.close();
     }
+
+    /*
+    public String getAllInputFieldsNamesFromFile(String fileName){
+        String result = "";
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            Query query = session.createQuery("from User where userName = '" + name + "'");
+            List users = query.list();
+            return (User) users.get(0);
+        } catch (Exception e) {
+            log.error("Some fails with finding user with userName = {}", name, e);
+            return null;
+        }
+        return result;
+    }
+
+     */
 }

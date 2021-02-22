@@ -17,16 +17,18 @@ public class DocFiles {
     private String path;
     @Column(name = "file_format")
     private String fileFormat;
-
     @Column(name = "file_hash_name")
     private String fileHashName;
+    @Column(name = "input_fields_names")
+    private String inputFieldsNames;
 
-    public DocFiles(String groupId, String fileName, String path, String fileFormat,String fileHashName) {
+    public DocFiles(String groupId, String fileName, String path, String fileFormat,String fileHashName,String inputFieldsNames) {
         this.groupId = groupId;
         this.fileName = fileName;
         this.path = path;
         this.fileFormat = fileFormat;
         this.fileHashName = fileHashName;
+        this.inputFieldsNames = inputFieldsNames;
     }
 
     public int getFileId() {
@@ -77,4 +79,11 @@ public class DocFiles {
         this.fileHashName = fileHashName;
     }
 
+    public String getInputFieldsNames() {
+        return inputFieldsNames;
+    }
+
+    public void setInputFieldsNames(String inputFieldsNames) {
+        this.inputFieldsNames = inputFieldsNames;
+    }
 }

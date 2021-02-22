@@ -27,7 +27,6 @@ public class UserDao {
             return (User) users.get(0);
         } catch (Exception e) {
             log.error("Some fails with finding user with userName = {} and password = {}", name, password, e);
-            System.out.println(e);
             return null;
         }
     }
@@ -39,7 +38,6 @@ public class UserDao {
             return (User) users.get(0);
         } catch (Exception e) {
             log.error("Some fails with finding user with userName = {}", name, e);
-            System.out.println(e);
             return null;
         }
     }

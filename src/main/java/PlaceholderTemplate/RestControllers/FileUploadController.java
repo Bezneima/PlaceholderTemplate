@@ -40,11 +40,11 @@ public class FileUploadController {
             method = RequestMethod.POST,
             consumes = {"multipart/form-data"}
     )
-    public String upload(@RequestParam MultipartFile file,
-                         @RequestParam String UploadedGroup,
-                         @RequestParam boolean isTemplate
+    public String upload(@RequestParam MultipartFile file//,
+                         //@RequestParam String UploadedGroup,
+                         //@RequestParam boolean isTemplate
     ) {
-        return storageService.uploadFileToGroup(file,UploadedGroup,isTemplate);
+        return storageService.uploadFileToGroup(file,"1",false);
     }
 
     @ExceptionHandler(StorageException.class)
