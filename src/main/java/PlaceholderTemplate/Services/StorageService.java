@@ -156,7 +156,7 @@ public class StorageService {
             File file = new File(stringBuilder.toString());
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + docFilesDao.getFileName(fileName))
                     .contentType(mediaType)
                     .contentLength(file.length())
                     .body(resource);
