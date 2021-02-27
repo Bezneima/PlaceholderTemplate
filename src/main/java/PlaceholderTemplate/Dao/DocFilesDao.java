@@ -31,12 +31,26 @@ public class DocFilesDao {
         try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
             Query query = session.createQuery("from DocFiles where fileHashName = '" + fileMd5Hash + "'");
             List<DocFiles> docFile = query.list();
-            if(docFile.size()>0)
+            if (docFile.size() > 0)
                 return docFile.get(0).getInputFieldsNames();
             else
                 return "[]";
         } catch (Exception e) {
             log.error("Some fails with finding docFile with fileMd5Hash = {}", fileMd5Hash, e);
+            return null;
+        }
+    }
+
+    public String getFileName(String fileMd5Hash) {
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            Query query = session.createQuery("from DocFiles where fileHashName = '" + fileMd5Hash + "'");
+            List<DocFiles> docFile = query.list();
+            if (docFile.size() > 0)
+                return docFile.get(0).getFileName();
+            else
+                return "";
+        } catch (Exception e) {
+            log.error("Failed work getFileName = {}", fileMd5Hash, e);
             return null;
         }
     }

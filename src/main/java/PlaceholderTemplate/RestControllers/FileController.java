@@ -32,7 +32,7 @@ public class FileController {
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     public ResponseEntity<InputStreamResource> downloadFile() throws IOException {
-        return storageService.downloadFile("1",true,"someFile");
+        return storageService.downloadFile("1",false,"20AB837C1B723374BF75DF21EEEBB3E1");
     }
 
     @GetMapping(
