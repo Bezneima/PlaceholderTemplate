@@ -3,17 +3,29 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import logger from 'redux-logger';
 import { BrowserRouter } from 'react-router-dom';
+import { applyMiddleware, createStore } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import rootReducer from './reducers/rootReducer';
+import { Provider } from 'react-redux';
+import GlobalStyle from "./common/style";
+import rootSaga from './saga/rootSaga';
 
 const basename = "/";
 
+const sagaMiddleware = createSagaMiddleware();
+const middleware = applyMiddleware(logger, sagaMiddleware);
+const store = createStore(rootReducer, middleware);
+sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(
-    <React.StrictMode>
+    <Provider store={store}>
         <BrowserRouter basename={basename}>
+            <GlobalStyle />
             <App/>
         </BrowserRouter>
-    </React.StrictMode>,
+    </Provider>,
     document.getElementById('root')
 );
 
