@@ -27,12 +27,18 @@ public class FileController {
         this.storageService = storageService;
     }
 
+    @CrossOrigin
+    @GetMapping(value = "/test")
+    public String test(){
+        return "{\"files\":\"Someinfo\"}";
+    }
+
     @GetMapping(
             value = "/download",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     public ResponseEntity<InputStreamResource> downloadFile() throws IOException {
-        return storageService.downloadFile("1",false,"20AB837C1B723374BF75DF21EEEBB3E1");
+        return storageService.downloadFile("1",false,"BF70BA8F8DFD6402116087EE2F343208");
     }
 
     @GetMapping(
