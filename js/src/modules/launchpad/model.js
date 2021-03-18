@@ -1,14 +1,5 @@
-export type LaunchpadState = {
+export type UserState = {
+    isAuth: string;
+    login:string;
     isLoading: boolean;
-    files:string;
-    files1: Array<FileInfo>;
-};
-
-export type FileInfo = {
-    fileId: number,
-    fileName: string,
-    path: string,
-    fileFormat:string,
-    fileHashName:string,
-    inputFieldsNames: Array<string>;
 };

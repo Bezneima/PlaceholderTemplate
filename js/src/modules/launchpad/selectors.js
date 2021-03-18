@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 import type {RootState} from "../../rootState";
 
-export const getState = (state: RootState) => state.launchpad;
-export const getIsLoading = (state: RootState) => state.launchpad.isLoading;
+export const getUserState = (state: RootState) => state.userState;
+export const getIsLoading = (state: RootState) => state.isLoading;
 
-export const getAllFiles = createSelector([getState, getIsLoading], (state, isLoading: boolean) =>
-    isLoading === false ? state.files : [],
+export const getUserInfo = createSelector([getUserState, getIsLoading], (userState, isLoading: boolean) =>
+    isLoading === false ? userState : {},
 );

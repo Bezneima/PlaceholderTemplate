@@ -1,9 +1,9 @@
 import {all} from 'redux-saga/effects';
 
-import launchpadSaga from '../modules/launchpad/saga';
+import UsersRootSaga from '../modules/launchpad/saga';
 
-export default function* rootSaga(): Generator<any, any, any> {
+export default function* rootSaga(): Generator<any> {
     yield all([
-        launchpadSaga(),
+        UsersRootSaga(),
     ]);
 }

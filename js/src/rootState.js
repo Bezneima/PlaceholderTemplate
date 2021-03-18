@@ -1,5 +1,6 @@
-import type {LaunchpadState} from "./modules/launchpad/model";
+import type {UserState} from "./modules/launchpad/model";
 
 export type RootState = {
-    launchpad: LaunchpadState;
+    isLoading:boolean,
+    userState:UserState,
 }

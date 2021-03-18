@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import launchpadReducer from '../modules/launchpad/launchpadReducer';
+import usersReducer from '../modules/launchpad/usersReducer';
 
 const rootReducer = combineReducers({
-    launchpad: launchpadReducer,
+    userState: usersReducer,
 });
 
 export default rootReducer;

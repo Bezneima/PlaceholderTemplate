@@ -3,6 +3,9 @@ package PlaceholderTemplate.RestControllers;
 
 import PlaceholderTemplate.Exceptions.StorageException;
 import PlaceholderTemplate.Services.StorageService;
+import PlaceholderTemplate.Services.UserService;
+import PlaceholderTemplate.dto.User;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -22,15 +25,19 @@ import org.springframework.web.bind.annotation.*;
 public class FileController {
 
     private final StorageService storageService;
+    private final UserService userService;
 
-    public FileController(@Autowired StorageService storageService) {
+    public FileController(@Autowired StorageService storageService,
+                          @Autowired UserService userService) {
         this.storageService = storageService;
+        this.userService = userService;
     }
 
     @CrossOrigin
-    @GetMapping(value = "/test")
-    public String test(){
-        return "{\"files\":\"Someinfo\"}";
+    @RequestMapping(value = "/CheckToken", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public @ResponseBody String CheckToken(@RequestBody String requestBody) {
+        String result = userService.getUserByToken(requestBody);
+        return result;
     }
 
     @GetMapping(
@@ -38,7 +45,7 @@ public class FileController {
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     public ResponseEntity<InputStreamResource> downloadFile() throws IOException {
-        return storageService.downloadFile("1",false,"BF70BA8F8DFD6402116087EE2F343208");
+        return storageService.downloadFile("1", false, "BF70BA8F8DFD6402116087EE2F343208");
     }
 
     @GetMapping(
@@ -57,7 +64,7 @@ public class FileController {
                          //@RequestParam String UploadedGroup,
                          //@RequestParam boolean isTemplate
     ) {
-        return storageService.uploadFileToGroup(file,"1",false);
+        return storageService.uploadFileToGroup(file, "1", false);
     }
 
     @ExceptionHandler(StorageException.class)

@@ -2,13 +2,17 @@ package PlaceholderTemplate.Services;
 
 import PlaceholderTemplate.Dao.UserDao;
 import PlaceholderTemplate.dto.User;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
     private final UserDao usersDao = new UserDao();
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
@@ -30,6 +34,12 @@ public class UserService {
             return md5Token;
         else
             return "false";
+    }
+
+    public String getUserByToken(String requestBody){
+        Gson gson = new Gson();
+        User requestedUser = gson.fromJson(requestBody, User.class);
+        return gson.toJson(usersDao.findByTokenAndName(requestedUser));
     }
 
     public boolean checkToken(String login, String token) {

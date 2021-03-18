@@ -42,6 +42,20 @@ public class UserDao {
         }
     }
 
+    public boolean findByTokenAndName(User requestedUser) {//TODO чет много условий обдумать как делают нормально
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            if (requestedUser.getUserName() != null && requestedUser.getLastUserToken() != null) {
+                Query query = session.createQuery("from User where lastUserToken = '" + requestedUser.getLastUserToken() + "' and userName ='" + requestedUser.getUserName() + "'");
+                List users = query.list();
+                return users.size() > 0;
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("Some fails with finding user with userName = {}", requestedUser.getUserName(), e);
+            return false;
+        }
+    }
+
     public void setToken(String login, String token) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
@@ -97,6 +111,7 @@ public class UserDao {
         transaction.commit();
         session.close();
     }
+
     public List<User> findAll() {
         List<User> users = (List<User>) HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("From User").list();
         return users;

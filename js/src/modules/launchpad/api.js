@@ -1,11 +1,14 @@
 import axios from 'axios';
 
-export const loadFileList = () =>
+export const loadUser = (userToken, userName) =>
     axios
-        .get(`http://localhost:8080/files/test`, {
-            headers: {
-                token: "",
-                Accept: 'application/json',
-            }
+        .post(`http://localhost:8080/files/CheckToken`, {
+            last_user_token: userToken,
+            user_name: userName,
+        }, {
+            dataType: 'JSON',
+            contentType:"application/json; charset=UTF-8",
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
         })
         .then((response) => response.data);

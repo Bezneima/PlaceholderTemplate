@@ -1,19 +1,18 @@
 import React from 'react';
-import type {FileInfo} from "../model";
 import {RouteComponentProps} from 'react-router-dom';
 
 interface Props extends RouteComponentProps<{}> {
-    filter: string;
-    items: Array<FileInfo>;
-    loadLaunchpad: () => { type: string };
+    loadUsers: () => { type: string };
+    isLoading:boolean;
+    isAuth:boolean;
 }
 
 class Launchpad extends React.Component<Props> {
-    componentDidMount() {
-        console.log(this.props.loadLaunchpad());
-        this.props.loadLaunchpad();
+    componentDidMount() {//localStorage.getItem('token')
+        this.props.loadUsers("last_user_token","user_name");
     }
     render() {
+        console.log(this.props);
         return <div>{"Какой-то текст"}</div>
     }
 
