@@ -27,6 +27,32 @@ export default (state: UserState = initialState, action: any): UserState => {
                 isLoading: false,
             };
         }
+        case actions.AUTH_USERS_REQUESTED: {
+            return {
+                ...state,
+                failedLogin:false,
+                token:"",
+                logining: true,
+            };
+        }
+        case actions.AUTH_USERS_SUCCESS: {
+            localStorage.setItem('token',action.user.last_user_token);
+            localStorage.setItem('login',action.user.user_name);
+            return {
+                ...state,
+                token: action.user.last_user_token,
+                login: action.user.user_name,
+                isAuth:true,
+                logining:false,
+            };
+        }
+        case actions.AUTH_USERS_FAILURE: {
+            return {
+                ...state,
+                failedLogin:true,
+                logining: false,
+            };
+        }
         default:
             return state;
     }

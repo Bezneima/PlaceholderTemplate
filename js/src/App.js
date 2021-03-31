@@ -3,6 +3,7 @@ import {Route, Switch} from 'react-router-dom';
 import './App.css';
 import Loadable from 'react-loadable';
 import Loading from '../src/common/components/Loading';
+import 'rsuite/dist/styles/rsuite-default.css';
 
 const LaunchpadContainer = Loadable({
     loader: () =>

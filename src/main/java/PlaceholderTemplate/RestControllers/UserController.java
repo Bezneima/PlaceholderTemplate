@@ -2,25 +2,25 @@ package PlaceholderTemplate.RestControllers;
 
 import PlaceholderTemplate.Services.UserService;
 import PlaceholderTemplate.dto.User;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @RequestMapping(value = "/auth", method = RequestMethod.GET)
-    public String authorization(@RequestParam String login, @RequestParam String password) {
+
+    @CrossOrigin
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    public String authorization(@RequestBody String requestBody) {
         UserService userService = new UserService();
-        return userService.getToken(login, password);
+        return userService.getToken(requestBody);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/checkAuthToken",method = RequestMethod.POST)
-    public boolean checkAuthToken(String login,String token){
+    public boolean checkAuthToken(@RequestBody String requestBody){
         UserService userService = new UserService();
-        return userService.checkToken(login, token);
+        return userService.checkToken(requestBody);
     }
 
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)

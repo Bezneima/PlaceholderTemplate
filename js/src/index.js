@@ -18,6 +18,7 @@ const sagaMiddleware = createSagaMiddleware();
 const middleware = applyMiddleware(logger, sagaMiddleware);
 const store = createStore(rootReducer, middleware);
 sagaMiddleware.run(rootSaga);
+// or 'rsuite/dist/styles/rsuite-default.css'
 
 ReactDOM.render(
     <Provider store={store}>

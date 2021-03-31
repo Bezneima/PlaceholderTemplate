@@ -24,26 +24,33 @@ public class UserService {
         return usersDao.findById(id);
     }
 
-    public String getToken(String name, String password) {
-        User user = usersDao.findByNameAndPass(name, password);
+    public String getToken(String requestBody) {
+
+        Gson gson = new Gson();
+        User requestedUser = gson.fromJson(requestBody, User.class);
+        User user = usersDao.findByNameAndPass(requestedUser.getUserName(), requestedUser.getPassword());
 
         String md5Token = DigestUtils
-                .md5Hex(name + password + java.util.Calendar.getInstance().getTime().toString()).toUpperCase();
-        usersDao.setToken(name, md5Token);
-        if (user != null)
-            return md5Token;
+                .md5Hex(requestedUser.getUserName() + requestedUser.getPassword() + java.util.Calendar.getInstance().getTime().toString()).toUpperCase();
+        if (user != null) {
+            usersDao.setToken(requestedUser.getUserName(), md5Token);
+            user.setLastUserToken(md5Token);
+            return gson.toJson(user);
+        }
         else
             return "false";
     }
 
-    public String getUserByToken(String requestBody){
+    public String getUserByToken(String requestBody) {
         Gson gson = new Gson();
         User requestedUser = gson.fromJson(requestBody, User.class);
         return gson.toJson(usersDao.findByTokenAndName(requestedUser));
     }
 
-    public boolean checkToken(String login, String token) {
-        return usersDao.checkToken(login, token);
+    public boolean checkToken(String requestBody) {
+        Gson gson = new Gson();
+        User requestedUser = gson.fromJson(requestBody, User.class);
+        return usersDao.checkToken(requestedUser.getUserName(), requestedUser.getLastUserToken());
     }
 
     public String saveUser(User user) {
