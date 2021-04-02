@@ -1,6 +1,7 @@
 import React from 'react';
 import {RouteComponentProps} from 'react-router-dom';
 import AuthFormComponent from "./AuthFormComponent";
+import LaunchpadHeader from "./LaunchpadHeader";
 
 interface Props extends RouteComponentProps<{}> {
     loadUsers: () => { type: string };
@@ -23,7 +24,7 @@ class Launchpad extends React.Component<Props> {
         const {authUser, userState} = this.props;
         console.log(this.props);
         if (isAuth)
-            return <div>{"Основной контейнер"}</div>;
+            return <div><LaunchpadHeader username={localStorage.getItem('login')}/></div>;
         else {
             return <AuthFormComponent authUser={authUser} userState={userState}/>;
         }
