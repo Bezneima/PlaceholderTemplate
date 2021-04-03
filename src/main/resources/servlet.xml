@@ -6,6 +6,8 @@
                     <list>
                         <value>text/html;charset=UTF-8</value>
                         <value>application/json;charset=UTF-8</value>
+                        <value>image/jpeg</value>
+                        <value>image/png</value>
                     </list>
                 </property>
             </bean>

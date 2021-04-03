@@ -9,14 +9,14 @@ interface Props extends RouteComponentProps<{}> {
     userState: {
         isLoading: boolean;
         isAuth: boolean;
-    }
+    };
+    backURL: () => {type: string};
 }
 
 class Launchpad extends React.Component<Props> {
     componentDidMount() {
-
+        this.backURL = 'http://localhost:8080/';
         this.props.loadUsers(localStorage.getItem('token'), localStorage.getItem('login'));
-
     }
 
     render() {
@@ -24,7 +24,7 @@ class Launchpad extends React.Component<Props> {
         const {authUser, userState} = this.props;
         console.log(this.props);
         if (isAuth)
-            return <div><LaunchpadHeader username={localStorage.getItem('login')}/></div>;
+            return <div><LaunchpadHeader backURL={this.backURL} username={localStorage.getItem('login')}/></div>;
         else {
             return <AuthFormComponent authUser={authUser} userState={userState}/>;
         }

@@ -72,6 +72,20 @@ public class UserDao {
         transaction.commit();
         session.close();
     }
+    public String findAvatarByToken(String userToken){
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            if(userToken != null){
+                Query query = session.createQuery("from User where lastUserToken = '" + userToken + "'");
+                List<User> users = query.list();
+                return users.get(0).getAvatarImgPath();
+            }
+                return null;
+        }
+        catch (Exception e) {
+            log.error("Some fails with finding user with userToken = {}", userToken, e);
+            return null;
+        }
+    }
 
 
     public boolean checkToken(String login, String token) {
@@ -87,6 +101,7 @@ public class UserDao {
         }
         return false;
     }
+
 
     public void save(User user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
@@ -116,5 +131,4 @@ public class UserDao {
         List<User> users = (List<User>) HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("From User").list();
         return users;
     }
-
 }
