@@ -13,10 +13,10 @@ export const HeaderContainer = styled.div`
     color: #fff;
     padding: 0 10px;
 `
-export const headerLeft = styled.div`
+export const HeaderLeft = styled.div`
     display: inline-block;
 `
-export const headerRight = styled.div`
+export const HeaderRight = styled.div`
     display: inline-block;
 `
 
@@ -32,16 +32,16 @@ function logOut(){
 
 function LaunchpadHeader(props){
     return <HeaderContainer>
-        <headerLeft>
+        <HeaderLeft>
             <Icon icon = "file-text" size = "2x"/>
-        </headerLeft>
-        <headerRight>
+        </HeaderLeft>
+        <HeaderRight>
 
             <Dropdown title={props.username} placement="bottomEnd">
                 <Dropdown.Item icon={<Icon icon="avatar"/>}>Профиль</Dropdown.Item>
                 <Dropdown.Item onSelect={logOut}  icon={<Icon icon="sign-out"/>}>Выход</Dropdown.Item>
             </Dropdown>
-        </headerRight>
+        </HeaderRight>
     </HeaderContainer>
 }
 export default LaunchpadHeader
