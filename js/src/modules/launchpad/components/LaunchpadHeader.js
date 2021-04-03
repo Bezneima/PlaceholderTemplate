@@ -40,7 +40,7 @@ function LaunchpadHeader(props){
             <Icon icon = "file-text" size = "2x"/>
         </HeaderLeft>
         <HeaderRight>
-
+            <img style={AvatarStyle} src={props.backURL+"users/getAvatar?userToken="+localStorage.getItem('token')}  height={30} width={30} alt=""/>
             <Dropdown title={props.username} placement="bottomEnd">
                 <Dropdown.Item icon={<Icon icon="avatar"/>}>Профиль</Dropdown.Item>
                 <Dropdown.Item onSelect={logOut}  icon={<Icon icon="sign-out"/>}>Выход</Dropdown.Item>
