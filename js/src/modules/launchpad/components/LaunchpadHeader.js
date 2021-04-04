@@ -33,7 +33,9 @@ function logOut(){
     localStorage.removeItem('token');
     window.location.reload()
 }
-
+function profile(){
+    window.location.href = '/profile'
+}
 function LaunchpadHeader(props){
     return <HeaderContainer>
         <HeaderLeft>
@@ -42,7 +44,7 @@ function LaunchpadHeader(props){
         <HeaderRight>
             <img style={AvatarStyle} src={props.backURL+"users/getAvatar?userToken="+localStorage.getItem('token')}  height={30} width={30} alt=""/>
             <Dropdown title={props.username} placement="bottomEnd">
-                <Dropdown.Item icon={<Icon icon="avatar"/>}>Профиль</Dropdown.Item>
+                <Dropdown.Item onSelect={profile} icon={<Icon icon="avatar"/>}>Профиль</Dropdown.Item>
                 <Dropdown.Item onSelect={logOut}  icon={<Icon icon="sign-out"/>}>Выход</Dropdown.Item>
             </Dropdown>
         </HeaderRight>

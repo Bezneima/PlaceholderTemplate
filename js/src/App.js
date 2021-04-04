@@ -12,10 +12,18 @@ const LaunchpadContainer = Loadable({
             ),
     loading: Loading,
 });
+const ProfileContainer = Loadable({
+    loader: () =>
+        import(
+            './modules/profile/components/ProfileContainer'
+            ),
+    loading: Loading,
+});
 
 const App = () => (
     <Switch>
         <Route exact path="/" component={LaunchpadContainer} />
+        <Route exact path="/profile" component={ProfileContainer} />
     </Switch>
 );
 

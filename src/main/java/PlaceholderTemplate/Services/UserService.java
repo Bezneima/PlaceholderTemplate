@@ -57,7 +57,7 @@ public class UserService {
     public String getUserByToken(String requestBody) {
         Gson gson = new Gson();
         User requestedUser = gson.fromJson(requestBody, User.class);
-        return gson.toJson(usersDao.findByTokenAndName(requestedUser));
+        return gson.toJson(usersDao.findUserByTokenAndName(requestedUser));
     }
 
     public boolean checkToken(String requestBody) {
