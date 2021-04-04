@@ -55,6 +55,20 @@ public class UserDao {
             return false;
         }
     }
+    public User findUserByTokenAndName(User requestedUser){
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            if (requestedUser.getUserName() != null && requestedUser.getLastUserToken() != null) {
+                Query query = session.createQuery("from User where lastUserToken = '" + requestedUser.getLastUserToken() + "' and userName ='" + requestedUser.getUserName() + "'");
+                List<User> users = query.list();
+                users.get(0).setPassword("");
+                return users.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            log.error("Some fails with finding user with userName = {}", requestedUser.getUserName(), e);
+            return null;
+        }
+    }
 
     public void setToken(String login, String token) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();

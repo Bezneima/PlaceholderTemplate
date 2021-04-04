@@ -43,5 +43,11 @@ public class UserController {
     public ResponseEntity<InputStreamResource> getAvatar(@RequestParam String userToken) throws FileNotFoundException {
         return userService.getUserAvatar(userToken);
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
+    public String getUserInfo(@RequestBody String requestBody){
+        return userService.getUserByToken(requestBody);
+    }
 }
 
