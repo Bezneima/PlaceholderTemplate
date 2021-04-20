@@ -4,18 +4,21 @@ import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 import {Action, Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {loadUsers,authUser} from "../actions";
-import {getUserInfo, getIsLoading} from "../selectors";
+import {loadUsers,authUser} from "../actions/userActions";
+import {getUserInfo, getIsLoading, getFilesInfo} from "../selectors";
+import {loadFiles} from "../actions/fileActions";
 
 const mapStateToProps = () => createStructuredSelector({
     isLoading: getIsLoading,
     userState: getUserInfo,
+    filesState: getFilesInfo,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) =>
     bindActionCreators(
         {
             loadUsers,
+            loadFiles,
             authUser,
         },
         dispatch,

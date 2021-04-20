@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -51,6 +52,17 @@ public class DocFilesDao {
                 return "";
         } catch (Exception e) {
             log.error("Failed work getFileName = {}", fileMd5Hash, e);
+            return null;
+        }
+    }
+
+    public List<DocFiles> getAllFileLinksByGroupId(Integer groupId) {
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            Query query = session.createQuery("from DocFiles where groupId = '" + groupId + "'");
+            List<DocFiles> docFiles = query.list();
+            return docFiles;
+        } catch (Exception e) {
+            log.error("Failed work getAllFileLinksByGroupId = {}", groupId, e);
             return null;
         }
     }

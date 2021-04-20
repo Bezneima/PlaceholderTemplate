@@ -3,3 +3,8 @@ export type UserState = {
     login:string;
     isLoading: boolean;
 };
+
+export type FilesState = {
+    files: [];
+    isLoading: boolean;
+}
