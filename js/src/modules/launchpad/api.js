@@ -13,11 +13,24 @@ export const loadUser = (userToken, userName) =>
         })
         .then((response) => response.data);
 
-export const authUser = (login, password) =>
+export const authUser = (userName, password) =>
     axios
         .post(`http://localhost:8080/users/auth`, {
-            user_name: login,
+            user_name: userName,
             password: password,
+        }, {
+            dataType: 'JSON',
+            contentType:"application/json; charset=UTF-8",
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
+        })
+        .then((response) => response.data);
+
+export const loadFiles = (userName, token) =>
+    axios
+        .post(`http://localhost:8080/files/getAllUserFiles`, {
+            user_name: userName,
+            last_user_token: token,
         }, {
             dataType: 'JSON',
             contentType:"application/json; charset=UTF-8",

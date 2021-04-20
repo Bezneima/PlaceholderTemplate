@@ -1,5 +1,7 @@
 package PlaceholderTemplate;
 
+import PlaceholderTemplate.Dao.InputFields;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -15,8 +17,8 @@ import java.util.regex.Pattern;
 
 public class DocxWorker {
 
-    public static List<String> getAllInputFieldsName(String inputFilePath) throws Exception {
-        List<String> result = new ArrayList<>(Collections.emptyList());
+    public static List<InputFields> getAllInputFieldsName(String inputFilePath) throws Exception {
+        List<InputFields> result = new ArrayList<>(Collections.emptyList());
         XWPFDocument doc = new XWPFDocument(OPCPackage.open(inputFilePath));
 
         for (XWPFParagraph p : doc.getParagraphs()) {
@@ -141,8 +143,8 @@ public class DocxWorker {
     }
 
 
-    private static List<String> findInputFieldsName(XWPFParagraph p) {
-        List<String> result = new ArrayList<>(Collections.emptyList());
+    private static List<InputFields> findInputFieldsName(XWPFParagraph p) {
+        List<InputFields> result = new ArrayList<>(Collections.emptyList());
         String pText = p.getText(); // complete paragraph as string
         if (pText.contains("${")) { // if paragraph does not include our pattern, ignore
             TreeMap<Integer, XWPFRun> posRuns = getPosToRuns(p);
@@ -189,18 +191,33 @@ public class DocxWorker {
                         if (found1 && found2 && !found3) { // find } and set all chars between { and } to blank
                             if (txt.contains("}")) {
                                 if (r == found2Run) { // complete pattern was within a single run
-                                    result.add(txt.substring(found2Pos, txt.indexOf('}')));
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    String value = txt.substring(found2Pos, txt.indexOf('}'));
+                                    String key = DigestUtils.md5Hex(
+                                            stringBuilder
+                                                    .append(value)
+                                                    .append(java.util.Calendar.getInstance().getTime().toString()).toString()).toUpperCase();
+
+                                    InputFields inputFields = new InputFields(key, value);
+                                    result.add(inputFields);
                                     txt = txt.substring(0, found2Pos) + txt.substring(txt.indexOf('}'));
                                 } else // pattern spread across multiple runs
                                 {
-                                    result.set(result.size() - 1, result.get(result.size() - 1) + txt.substring(0, txt.length() - 1));
+                                    String value = result.get(result.size() - 1).value + txt.substring(0, txt.length() - 1);
+                                    InputFields inputFields = new InputFields(result.get(result.size() - 1).key, value);
+                                    result.set(result.size() - 1, inputFields);
                                     txt = txt.substring(txt.indexOf('}'));
                                 }
                             } else if (r == found2Run) // same run as { but no }, remove all text starting at {
                             {
                                 txt = txt.substring(0, found2Pos);
                             } else {
-                                result.add(txt);
+                                StringBuilder stringBuilder = new StringBuilder();
+                                InputFields newInputFields = new InputFields(DigestUtils.md5Hex(
+                                        stringBuilder
+                                                .append(txt)
+                                                .append(java.util.Calendar.getInstance().getTime().toString()).toString()).toUpperCase(), txt);
+                                result.add(newInputFields);
                                 txt = ""; // run between { and }, set text to blank
                             }
                         }

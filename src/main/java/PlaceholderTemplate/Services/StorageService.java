@@ -1,13 +1,13 @@
 package PlaceholderTemplate.Services;
 
-import PlaceholderTemplate.Dao.DocFilesDao;
-import PlaceholderTemplate.Dao.TemplateFilesDao;
-import PlaceholderTemplate.Dao.UserDao;
+import PlaceholderTemplate.Dao.*;
 import PlaceholderTemplate.DocxWorker;
 import PlaceholderTemplate.Exceptions.StorageException;
 import PlaceholderTemplate.FileUtils.MediaTypeUtils;
 import PlaceholderTemplate.dto.DocFiles;
+import PlaceholderTemplate.dto.Group;
 import PlaceholderTemplate.dto.TemplateFiles;
+import PlaceholderTemplate.dto.User;
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -45,16 +46,19 @@ public class StorageService {
     @Value("${upload.path}")
     private String uploadsPath;
     private final UserDao usersDao;
+    private final GroupDao groupDao;
     private final TemplateFilesDao templateFilesDao;
     private final DocFilesDao docFilesDao;
     private static final Logger log = LoggerFactory.getLogger(StorageService.class);
 
     StorageService(@Autowired UserDao userDao,
                    @Autowired DocFilesDao docFilesDao,
-                   @Autowired TemplateFilesDao templateFilesDao) {
+                   @Autowired TemplateFilesDao templateFilesDao,
+                   @Autowired GroupDao groupDao) {
         this.usersDao = userDao;
         this.docFilesDao = docFilesDao;
         this.templateFilesDao = templateFilesDao;
+        this.groupDao = groupDao;
     }
 
     public String uploadFileToGroup(MultipartFile file, String UploadeGroupId, boolean isTemplate) {
@@ -77,8 +81,8 @@ public class StorageService {
             finalFilePathStringBuilder.append("group/").append(UploadeGroupId).append("/docs");
             try {
                 writeFileToPath(file, finalFilePathStringBuilder.toString(), md5CashedName);
-                List<String> allFileInputFieldsName = DocxWorker.getAllInputFieldsName("uploads/"+finalFilePathStringBuilder.toString() + "/" + md5CashedName);
-                Gson gson = new Gson();
+                List<InputFields> allFileInputFieldsName = DocxWorker.getAllInputFieldsName("uploads/"+finalFilePathStringBuilder.toString() + "/" + md5CashedName);
+                Gson gson = new Gson();//тут
                 String allFileInputFieldsNameJson = gson.toJson(allFileInputFieldsName);
                 DocFiles docFiles = new DocFiles(
                         UploadeGroupId,
@@ -169,6 +173,21 @@ public class StorageService {
                     ioException
             );
             throw new IOException(ioException);
+        }
+    }
+
+    public String getAllUserFilesLinks(String requestBody){
+        Gson gson = new Gson();
+        User requestedUser = gson.fromJson(requestBody, User.class);
+        if(usersDao.checkToken(requestedUser.getUserName(),requestedUser.getLastUserToken())){
+            List<Group> userGroups = groupDao.findAllUsersGroup("member_name");
+            List<DocFiles> fileLinks = new LinkedList<>();
+            userGroups.forEach(group -> {
+                fileLinks.addAll(docFilesDao.getAllFileLinksByGroupId(group.getGroupId()));
+            });
+            return gson.toJson(fileLinks);
+        } else {
+            return null;//TODO обдумать что будет  если не будет доступа.
         }
     }
 

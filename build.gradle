@@ -9,7 +9,12 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
+
     mavenCentral()
+}
+
+ext {
+    jodconverterVersion = '4.1.0'
 }
 
 dependencies {
@@ -32,6 +37,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+    // https://mvnrepository.com/artifact/org.jodconverter/jodconverter-local
+    compile "org.jodconverter:jodconverter-local:$jodconverterVersion"
 }
 
 test {

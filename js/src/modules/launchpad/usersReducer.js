@@ -1,5 +1,5 @@
 import { UserState } from './model';
-import * as actions from './actions';
+import * as actions from './actions/userActions';
 
 const initialState: UserState = {
     isLoading: false,

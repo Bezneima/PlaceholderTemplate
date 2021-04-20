@@ -1,16 +1,18 @@
-import * as actions from './actions';
+import * as userActions from './actions/userActions';
+import * as fileActions from './actions/fileActions';
 import {all, call, put, takeEvery} from 'redux-saga/effects';
 import * as API from "./api";
-import type {loadUsersAction, authUserAction} from "./actions";
+import type {loadUsersAction, authUserAction} from "./actions/userActions";
+import type {loadFilesAction} from "./actions/fileActions";
 
 function* loadUsersSaga(action: loadUsersAction): Generator<any, any> {
     try {
         console.log("response",action.token, action.userName);
         const response = yield call(API.loadUser, action.token, action.userName);
         console.log('here',response);
-        yield put(actions.loadUsersSuccess(response));
+        yield put(userActions.loadUsersSuccess(response));
     } catch (error) {
-        yield put(actions.loadUsersFailure());
+        yield put(userActions.loadUsersFailure());
     }
 }
 
@@ -19,17 +21,31 @@ function* authUserSaga(action: authUserAction): Generator<any> {
         const response = yield call(API.authUser, action.login, action.password);
         console.log('response',response);
         if (response)
-            yield put(actions.authUserSuccess(response));
+            yield put(userActions.authUserSuccess(response));
         else
-            yield put(actions.authUserFailure());
+            yield put(userActions.authUserFailure());
     } catch (error) {
-        yield put(actions.authUserFailure());
+        yield put(userActions.authUserFailure());
+    }
+}
+
+function* LoadUserFilesSaga(action: loadFilesAction): Generator<any> {
+    try {
+        const response = yield call(API.loadFiles, action.userName, action.token);
+        console.log('response',response);
+        if (response)
+            yield put(fileActions.loadFilesSuccess(response));
+        else
+            yield put(fileActions.loadFilesFailure());
+    } catch (error) {
+        yield put(fileActions.loadFilesFailure());
     }
 }
 
 export default function* UsersRootSaga(): Generator<any, any> {
     yield all([
-        yield takeEvery(actions.LOAD_USERS_REQUESTED, loadUsersSaga),
-        yield takeEvery(actions.AUTH_USERS_REQUESTED, authUserSaga)
+        yield takeEvery(userActions.LOAD_USERS_REQUESTED, loadUsersSaga),
+        yield takeEvery(userActions.AUTH_USERS_REQUESTED, authUserSaga),
+        yield takeEvery(fileActions.LOAD_FILES_REQUESTED, LoadUserFilesSaga)
     ]);
 }

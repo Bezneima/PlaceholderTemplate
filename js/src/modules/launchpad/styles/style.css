@@ -1,0 +1,5 @@
+.customDropdown{
+    width: 200px;
+    text-align: left;
+    text-overflow: ellipsis;
+}

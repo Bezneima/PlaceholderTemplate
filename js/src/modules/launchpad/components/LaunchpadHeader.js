@@ -6,7 +6,7 @@ import { Icon } from 'rsuite';
 
 export const HeaderContainer = styled.div`
     height: 40px;
-    background-color: #272c36;
+    background-color: #292d33;
     display: flex;
     justify-content: space-between;
     align-items: center;

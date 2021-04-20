@@ -44,8 +44,8 @@ public class FileController {
             value = "/download",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
-    public ResponseEntity<InputStreamResource> downloadFile() throws IOException {
-        return storageService.downloadFile("1", false, "BF70BA8F8DFD6402116087EE2F343208");
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String groupName, @RequestParam String fileName) throws IOException {
+        return storageService.downloadFile(groupName, false, fileName);
     }
 
     @GetMapping(
@@ -65,6 +65,17 @@ public class FileController {
                          //@RequestParam boolean isTemplate
     ) {
         return storageService.uploadFileToGroup(file, "1", false);
+    }
+
+
+    @CrossOrigin
+    @RequestMapping(
+            value = "/getAllUserFiles",
+            method = RequestMethod.POST
+    )
+    public String getAllUserFiles(@RequestBody String requestBody){
+        return storageService.getAllUserFilesLinks(requestBody);
+
     }
 
     @ExceptionHandler(StorageException.class)
