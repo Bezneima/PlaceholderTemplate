@@ -45,8 +45,8 @@ public class FileController {
             value = "/download",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
-    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String groupName, @RequestParam String fileName) throws IOException {
-        return storageService.downloadFile(groupName, false, fileName);
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String groupName,@RequestParam String isTemplate, @RequestParam String fileName) throws IOException {
+        return storageService.downloadFile(groupName, isTemplate.equals("true"), fileName);
     }
 
     @CrossOrigin
@@ -54,16 +54,16 @@ public class FileController {
             value = "/downloadFilledTemplate",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
-    public ResponseEntity<InputStreamResource> downloadFilledTemplate(
+    public String downloadFilledTemplate(
             @RequestParam String groupName,
             @RequestParam String fileName,
-            @RequestBody String fields) throws IOException {
+            @RequestBody String fields) throws Exception {
         return storageService.downloadFilledTemplate(groupName, fields, fileName);
     }
 
     @GetMapping(
             value = "/getFileInputFields"
-    )
+            )
     public String getFileInputFields(@RequestParam String fileMd5Hash) {
         return storageService.getFileInputFields(fileMd5Hash);
     }

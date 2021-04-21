@@ -27,13 +27,14 @@ const filesWrapper = {
 
 }
 function downloadDoc(groupId, fileHash){
-    window.location.href = `http://localhost:8080/files/download?groupName=${groupId}&fileName=${fileHash}`
+    window.location.href = `http://localhost:8080/files/download?groupName=${groupId}&isTempalte=false&fileName=${fileHash}`
 }
 
 
 function LaunchpadBody(props) {
     const close = () => {
         setOpened(false);
+        filesState.modalState = [];
     }
     const open = (file) => {
         setSelectedFile(file);
