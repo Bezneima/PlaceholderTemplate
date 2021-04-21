@@ -12,12 +12,14 @@ function ModalFormComponent(props) {
             <ControlLabel>{field.value}</ControlLabel>
             <FormControl onChange={
                 (value) => {
-                    if(!modalState[field.key]){
-                        let result;
-                        result[field.key] = value;
-                        modalState.push(result);
-                    } else {
-                        modalState
+                    let item;
+                    item = modalState.find(obj => obj.key === field.key)
+                    if(item === undefined){
+                        modalState.push({key: field.key, value:field.value, valueTo: value});
+                    }
+                    else {
+                        modalState.pop();
+                        modalState.push({key: field.key, value:field.value, valueTo: value});
                     }
 
                     console.log(modalState);
@@ -28,11 +30,17 @@ function ModalFormComponent(props) {
 
     return (
         <Form onSubmit={() => {
+            let data = [];
+            modalState.forEach(item =>{
+                data.push({key:item.value, value:item.valueTo});
+            });
+
             console.log(modalState);
-            axios.post('http://localhost:8080/files/downloadFilledTemplate?groupName=1&fileName=3707B2FC918C40BCFB1869D6E48E456D', modalState)
+            axios.post('http://localhost:8080/files/downloadFilledTemplate?groupName=1&fileName=A7C5BC1993F7534AACEAE425B38DBC8B', data)
                 .then(function (response) {
                     close();
                     console.log(response);
+                    window.location.href = `http://localhost:8080/files/download?groupName=&isTemplate=true&fileName=${response.data}`
                 })
                 .catch(function (error) {
                     console.log(error);

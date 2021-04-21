@@ -9,6 +9,7 @@ import PlaceholderTemplate.dto.Group;
 import PlaceholderTemplate.dto.TemplateFiles;
 import PlaceholderTemplate.dto.User;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import PlaceholderTemplate.FileUtils.FileFormat;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +40,7 @@ import static PlaceholderTemplate.FileUtils.FileUtils.CheckOrMakePath;
 public class StorageService {
     @Autowired
     private ServletContext servletContext;
-    @Value("${upload.path}")
+    @Value("${upload.path}" )
     private String uploadsPath;
     private final UserDao usersDao;
     private final GroupDao groupDao;
@@ -64,7 +60,7 @@ public class StorageService {
 
     public String uploadFileToGroup(MultipartFile file, String UploadeGroupId, boolean isTemplate) {
         if (file.isEmpty()) {
-            throw new StorageException("Failed to store empty file");
+            throw new StorageException("Failed to store empty file" );
         }
         /* TODO Потом убрать комментарий
         if (!IsValidDocumentFormat(file)) {
@@ -77,12 +73,12 @@ public class StorageService {
                 stringBuilder
                         .append(file.getOriginalFilename())
                         .append(java.util.Calendar.getInstance().getTime().toString()).toString()).toUpperCase();
-        StringBuilder finalFilePathStringBuilder = new StringBuilder("");
+        StringBuilder finalFilePathStringBuilder = new StringBuilder("" );
         if (!isTemplate) {
-            finalFilePathStringBuilder.append("group/").append(UploadeGroupId).append("/docs");
+            finalFilePathStringBuilder.append("group/" ).append(UploadeGroupId).append("/docs" );
             try {
                 writeFileToPath(file, finalFilePathStringBuilder.toString(), md5CashedName);
-                List<InputFields> allFileInputFieldsName = DocxWorker.getAllInputFieldsName("uploads/"+finalFilePathStringBuilder.toString() + "/" + md5CashedName);
+                List<InputFields> allFileInputFieldsName = DocxWorker.getAllInputFieldsName("uploads/" + finalFilePathStringBuilder.toString() + "/" + md5CashedName);
                 Gson gson = new Gson();//тут
                 String allFileInputFieldsNameJson = gson.toJson(allFileInputFieldsName);
                 DocFiles docFiles = new DocFiles(
@@ -96,12 +92,12 @@ public class StorageService {
                 docFilesDao.save(docFiles);
             } catch (Exception e) {
                 log.error("Error while getAllInputFieldsName({})",
-                        finalFilePathStringBuilder.append("/").append(md5CashedName).toString(),
+                        finalFilePathStringBuilder.append("/" ).append(md5CashedName).toString(),
                         e);
                 return "Error while getting ${X} fields name(x)";
             }
         } else {
-            finalFilePathStringBuilder.append("group/").append(UploadeGroupId).append("/templates");
+            finalFilePathStringBuilder.append("group/" ).append(UploadeGroupId).append("/templates" );
             TemplateFiles templateFile = new TemplateFiles(
                     UploadeGroupId,
                     file.getOriginalFilename(),
@@ -121,13 +117,13 @@ public class StorageService {
         String fileName = file.getOriginalFilename();
         String formatOfFile = "";
         formatsStr = Arrays.toString(FileFormat.values());
-        String[] formats = formatsStr.replace("[", "").replace("]", "").
-                split(". ");
+        String[] formats = formatsStr.replace("[", "" ).replace("]", "" ).
+                split(". " );
         boolean isValid = false;
         try {
             assert fileName != null;
-            if (fileName.contains(".")) {
-                formatOfFile = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if (fileName.contains("." )) {
+                formatOfFile = fileName.substring(fileName.lastIndexOf("." ) + 1);
             }
         } catch (NullPointerException e) {
             log.error("Missing file extension:{}", formatOfFile, e);
@@ -153,14 +149,14 @@ public class StorageService {
     public ResponseEntity<InputStreamResource> downloadFile(String groupName, boolean isTemplate, String fileName) throws IOException {
         try {
             MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileName);
-            StringBuilder stringBuilder = new StringBuilder("uploads/group/");
+            StringBuilder stringBuilder = new StringBuilder("");
             if (isTemplate)
-                stringBuilder.append(groupName).append("/templates/").append(fileName);
+                stringBuilder.append("uploads/temp/").append(fileName);
             else
-                stringBuilder.append(groupName).append("/docs/").append(fileName);
+                stringBuilder.append("uploads/group/").append(groupName).append("/docs/").append(fileName);
             File file = new File(stringBuilder.toString());
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-            String filenameFinal = new String(docFilesDao.getFileName(fileName).getBytes("Cp1251"),"Cp1252");
+            String filenameFinal = new String(docFilesDao.getFileName(fileName).getBytes("Cp1251" ), "Cp1252" );
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filenameFinal)
                     .contentType(mediaType)
@@ -177,25 +173,33 @@ public class StorageService {
         }
     }
 
-    public ResponseEntity<InputStreamResource> downloadFilledTemplate(String groupName, String fields, String fileName) throws IOException {
+    public String downloadFilledTemplate(String groupName, String fields, String fileName) throws Exception {
         Gson gson = new Gson();
-        List<InputFields> inputFields = gson.fromJson(fields,new TypeToken<List<InputFields>>(){}.getType());
-        /*
+        Map map = new HashMap();
+        System.out.println(fields);
+        InputFields[] res = gson.fromJson(fields, InputFields[].class);
+
+        for (InputFields item : res) {
+            map.put(item.key, item.value);
+        }
+        System.out.println(map);
+        String outputPath = DigestUtils.md5Hex(fileName+java.util.Calendar.getInstance().getTime().toString()).toUpperCase();
+
+        OutputStream os = new java.io.FileOutputStream("uploads/temp/" + outputPath);
+        //Files.createFile(Paths.get(outputPath));
         DocxWorker.replace(
                 "uploads/group/" + groupName + "/docs/" + fileName,
-                inputFields,
-                "uploads/temp/" + DigestUtils.md5Hex(fileName).toUpperCase());
-
-
-         */
-        return null;
+                map,
+                os);
+        os.close();
+        return outputPath;
     }
 
-    public String getAllUserFilesLinks(String requestBody){
+    public String getAllUserFilesLinks(String requestBody) {
         Gson gson = new Gson();
         User requestedUser = gson.fromJson(requestBody, User.class);
-        if(usersDao.checkToken(requestedUser.getUserName(),requestedUser.getLastUserToken())){
-            List<Group> userGroups = groupDao.findAllUsersGroup("member_name");
+        if (usersDao.checkToken(requestedUser.getUserName(), requestedUser.getLastUserToken())) {
+            List<Group> userGroups = groupDao.findAllUsersGroup("member_name" );
             List<DocFiles> fileLinks = new LinkedList<>();
             userGroups.forEach(group -> {
                 fileLinks.addAll(docFilesDao.getAllFileLinksByGroupId(group.getGroupId()));
@@ -206,7 +210,7 @@ public class StorageService {
         }
     }
 
-    public String getFileInputFields(String fileMd5Hash){
+    public String getFileInputFields(String fileMd5Hash) {
         return docFilesDao.getFileInputFields(fileMd5Hash);
     }
 }
