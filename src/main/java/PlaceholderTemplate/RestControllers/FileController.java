@@ -35,7 +35,8 @@ public class FileController {
 
     @CrossOrigin
     @RequestMapping(value = "/CheckToken", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String CheckToken(@RequestBody String requestBody) {
+    public @ResponseBody
+    String CheckToken(@RequestBody String requestBody) {
         String result = userService.getUserByToken(requestBody);
         return result;
     }
@@ -46,6 +47,18 @@ public class FileController {
     )
     public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String groupName, @RequestParam String fileName) throws IOException {
         return storageService.downloadFile(groupName, false, fileName);
+    }
+
+    @CrossOrigin
+    @PostMapping(
+            value = "/downloadFilledTemplate",
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
+    )
+    public ResponseEntity<InputStreamResource> downloadFilledTemplate(
+            @RequestParam String groupName,
+            @RequestParam String fileName,
+            @RequestBody String fields) throws IOException {
+        return storageService.downloadFilledTemplate(groupName, fields, fileName);
     }
 
     @GetMapping(
@@ -73,7 +86,7 @@ public class FileController {
             value = "/getAllUserFiles",
             method = RequestMethod.POST
     )
-    public String getAllUserFiles(@RequestBody String requestBody){
+    public String getAllUserFiles(@RequestBody String requestBody) {
         return storageService.getAllUserFilesLinks(requestBody);
 
     }

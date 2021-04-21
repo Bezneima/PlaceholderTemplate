@@ -51,7 +51,7 @@ function LaunchpadBody(props) {
     return (
         <div style={filesWrapper}>
             {   selectedFile &&
-                <FillerModalComponent selectedFile={selectedFile} opened={opened} close={close}/>
+                <FillerModalComponent selectedFile={selectedFile} modalState={filesState.modalState} opened={opened} close={close}/>
             }
                 {
                     files.map((file, index) => {

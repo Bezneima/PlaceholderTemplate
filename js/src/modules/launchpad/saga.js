@@ -7,9 +7,7 @@ import type {loadFilesAction} from "./actions/fileActions";
 
 function* loadUsersSaga(action: loadUsersAction): Generator<any, any> {
     try {
-        console.log("response",action.token, action.userName);
         const response = yield call(API.loadUser, action.token, action.userName);
-        console.log('here',response);
         yield put(userActions.loadUsersSuccess(response));
     } catch (error) {
         yield put(userActions.loadUsersFailure());
@@ -19,7 +17,6 @@ function* loadUsersSaga(action: loadUsersAction): Generator<any, any> {
 function* authUserSaga(action: authUserAction): Generator<any> {
     try {
         const response = yield call(API.authUser, action.login, action.password);
-        console.log('response',response);
         if (response)
             yield put(userActions.authUserSuccess(response));
         else
@@ -32,7 +29,6 @@ function* authUserSaga(action: authUserAction): Generator<any> {
 function* LoadUserFilesSaga(action: loadFilesAction): Generator<any> {
     try {
         const response = yield call(API.loadFiles, action.userName, action.token);
-        console.log('response',response);
         if (response)
             yield put(fileActions.loadFilesSuccess(response));
         else

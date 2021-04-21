@@ -5,9 +5,7 @@ import * as API from "./api.js"
 
 function* loadProfileSaga(action: loadProfileAction): Generator<any, any> {
     try {
-        console.log("response",action.token, action.userName);
         const response = yield call(API.loadProfile, action.token, action.userName);
-        console.log('here',response);
         yield put(actions.loadProfileSuccess(response));
     } catch (error) {
         yield put(actions.loadProfileFailure());

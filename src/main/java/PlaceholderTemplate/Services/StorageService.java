@@ -9,6 +9,7 @@ import PlaceholderTemplate.dto.Group;
 import PlaceholderTemplate.dto.TemplateFiles;
 import PlaceholderTemplate.dto.User;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -174,6 +175,20 @@ public class StorageService {
             );
             throw new IOException(ioException);
         }
+    }
+
+    public ResponseEntity<InputStreamResource> downloadFilledTemplate(String groupName, String fields, String fileName) throws IOException {
+        Gson gson = new Gson();
+        List<InputFields> inputFields = gson.fromJson(fields,new TypeToken<List<InputFields>>(){}.getType());
+        /*
+        DocxWorker.replace(
+                "uploads/group/" + groupName + "/docs/" + fileName,
+                inputFields,
+                "uploads/temp/" + DigestUtils.md5Hex(fileName).toUpperCase());
+
+
+         */
+        return null;
     }
 
     public String getAllUserFilesLinks(String requestBody){

@@ -18,7 +18,6 @@ export default (state: ProfileState = initialState, action: any): ProfileState =
             };
         }
         case actions.LOAD_PROFILE_SUCCESS: {
-            console.log(action)
             return {
                 ...state,
                 id: action.profile.id,

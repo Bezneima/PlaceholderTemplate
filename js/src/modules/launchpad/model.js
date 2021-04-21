@@ -7,4 +7,5 @@ export type UserState = {
 export type FilesState = {
     files: [];
     isLoading: boolean;
+    modalState: [];
 }

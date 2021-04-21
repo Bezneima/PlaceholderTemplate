@@ -12,6 +12,7 @@ interface Props extends RouteComponentProps<{}> {
     filesState: {
         files:[];
         isLoading:boolean;
+        modalState: {};
     };
     userState: {
         isLoading: boolean;
@@ -30,7 +31,6 @@ class Launchpad extends React.Component<Props> {
     render() {
         const {isAuth} = this.props.userState;
         const {authUser, userState,filesState} = this.props;
-        console.log(this.props);
         if (isAuth)
             return (
                 <div>

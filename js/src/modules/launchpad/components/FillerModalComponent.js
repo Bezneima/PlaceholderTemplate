@@ -13,7 +13,6 @@ class FillerModalComponent extends React.Component {
     }
 
     render() {
-        console.log(this.props.selectedFile)
         const {inputFieldsNames, fileHashName, groupId, path} = this.props.selectedFile;
 
         return (
@@ -23,7 +22,7 @@ class FillerModalComponent extends React.Component {
                         <Modal.Title>Modal Title</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <ModalFormComponent inputFieldsNames={inputFieldsNames} close={this.props.close} />
+                        <ModalFormComponent modalState={this.props.modalState} inputFieldsNames={inputFieldsNames} close={this.props.close} />
                     </Modal.Body>
 
                     {/*<Modal.Footer>

@@ -3,6 +3,7 @@ import * as actions from "./actions/fileActions";
 
 const initialState: FilesState = {
     files: [],
+    modalState:[],
     isLoading:false,
 };
 
@@ -15,7 +16,6 @@ export default (state: FilesState = initialState, action: any): FilesState => {
             };
         }
         case actions.LOAD_FILES_SUCCESS: {
-            console.log('HUI',action)
             return {
                 ...state,
                 files: action.files,
