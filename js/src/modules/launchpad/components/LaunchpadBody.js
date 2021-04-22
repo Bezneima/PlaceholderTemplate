@@ -34,9 +34,11 @@ function downloadDoc(groupId, fileHash){
 function LaunchpadBody(props) {
     const close = () => {
         setOpened(false);
-        filesState.modalState = [];
+        //filesState.modalState = [];
+        console.log(filesState.modalState)
     }
     const open = (file) => {
+        console.log(filesState.modalState)
         setSelectedFile(file);
         setOpened(true);
     }

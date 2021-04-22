@@ -13,16 +13,15 @@ class FillerModalComponent extends React.Component {
     }
 
     render() {
-        const {inputFieldsNames, fileHashName, groupId, path} = this.props.selectedFile;
-
+        const {inputFieldsNames, fileHashName, groupId, path, fileName} = this.props.selectedFile;
         return (
             <div className="modal-container">
                 <Modal show={this.props.opened} onHide={this.props.close}>
                     <Modal.Header>
-                        <Modal.Title>Modal Title</Modal.Title>
+                        <Modal.Title>{fileName}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <ModalFormComponent modalState={this.props.modalState} inputFieldsNames={inputFieldsNames} close={this.props.close} />
+                        <ModalFormComponent modalState={this.props.modalState} fileName={fileName} inputFieldsNames={inputFieldsNames} close={this.props.close} />
                     </Modal.Body>
 
                     {/*<Modal.Footer>
