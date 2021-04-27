@@ -146,17 +146,21 @@ public class StorageService {
     }
 
 
-    public ResponseEntity<InputStreamResource> downloadFile(String groupName, boolean isTemplate, String fileName) throws IOException {
+    public ResponseEntity<InputStreamResource> downloadFile(String groupName, boolean isTemplate, String fileHashName, String fileName) throws IOException {
         try {
-            MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileName);
+            MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileHashName);
             StringBuilder stringBuilder = new StringBuilder("");
-            if (isTemplate)
-                stringBuilder.append("uploads/temp/").append(fileName);
-            else
-                stringBuilder.append("uploads/group/").append(groupName).append("/docs/").append(fileName);
+            String filenameFinal;
+            if (isTemplate) {
+                stringBuilder.append("uploads/temp/").append(fileHashName);
+                filenameFinal = fileName;
+            }
+            else {
+                stringBuilder.append("uploads/group/" ).append(groupName).append("/docs/" ).append(fileHashName);
+                filenameFinal = new String(docFilesDao.getFileName(fileHashName).getBytes("Cp1251" ), "Cp1252" );
+            }
             File file = new File(stringBuilder.toString());
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-            String filenameFinal = new String(docFilesDao.getFileName(fileName).getBytes("Cp1251" ), "Cp1252" );
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filenameFinal)
                     .contentType(mediaType)
@@ -164,7 +168,7 @@ public class StorageService {
                     .body(resource);
         } catch (IOException ioException) {
             log.error("error while download file with fileName={} isTemplate={} groupName={}",
-                    fileName,
+                    fileHashName,
                     isTemplate,
                     groupName,
                     ioException
@@ -173,7 +177,7 @@ public class StorageService {
         }
     }
 
-    public String downloadFilledTemplate(String groupName, String fields, String fileName) throws Exception {
+    public String downloadFilledTemplate(String groupName, String fields, String fileHashName, String fileName) throws Exception {
         Gson gson = new Gson();
         Map map = new HashMap();
         System.out.println(fields);
@@ -183,12 +187,12 @@ public class StorageService {
             map.put(item.key, item.value);
         }
         System.out.println(map);
-        String outputPath = DigestUtils.md5Hex(fileName+java.util.Calendar.getInstance().getTime().toString()).toUpperCase();
+        String outputPath = DigestUtils.md5Hex(fileHashName+java.util.Calendar.getInstance().getTime().toString()).toUpperCase();
 
         OutputStream os = new java.io.FileOutputStream("uploads/temp/" + outputPath);
         //Files.createFile(Paths.get(outputPath));
         DocxWorker.replace(
-                "uploads/group/" + groupName + "/docs/" + fileName,
+                "uploads/group/" + groupName + "/docs/" + fileHashName,
                 map,
                 os);
         os.close();

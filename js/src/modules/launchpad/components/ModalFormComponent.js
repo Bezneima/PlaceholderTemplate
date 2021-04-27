@@ -4,7 +4,7 @@ import axios from "axios";
 
 
 function ModalFormComponent(props) {
-    const {close, inputFieldsNames, modalState} = props;
+    const {close, inputFieldsNames, modalState, fileName} = props;
     let formParams = null;
     const allInputFields = JSON.parse(inputFieldsNames);
     const renderedInputFields = allInputFields.map((field, index) =>
@@ -21,8 +21,7 @@ function ModalFormComponent(props) {
                         modalState.pop();
                         modalState.push({key: field.key, value:field.value, valueTo: value});
                     }
-
-                    console.log(modalState);
+                    console.log(modalState)
                 }
             } name={field.key}/>
             <HelpBlock>Required</HelpBlock>
@@ -35,12 +34,11 @@ function ModalFormComponent(props) {
                 data.push({key:item.value, value:item.valueTo});
             });
 
-            console.log(modalState);
-            axios.post('http://localhost:8080/files/downloadFilledTemplate?groupName=1&fileName=A7C5BC1993F7534AACEAE425B38DBC8B', data)
+            axios.post(`http://localhost:8080/files/downloadFilledTemplate?groupName=1&fileHashName=A7C5BC1993F7534AACEAE425B38DBC8B&fileName=${fileName}`, data)
                 .then(function (response) {
                     close();
                     console.log(response);
-                    window.location.href = `http://localhost:8080/files/download?groupName=&isTemplate=true&fileName=${response.data}`
+                    window.location.href = `http://localhost:8080/files/download?groupName=&isTemplate=true&fileHashName=${response.data}&fileName=${fileName}`
                 })
                 .catch(function (error) {
                     console.log(error);
