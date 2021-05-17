@@ -67,6 +67,22 @@ public class DocFilesDao {
         }
     }
 
+    public String deleteFile(DocFiles deletedFile) {
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            Query query = session.createNativeQuery("DELETE from doc_files where file_hash_name = '" + deletedFile.getFileHashName() + "'");
+            Transaction transaction = session.beginTransaction();
+            int result = query.executeUpdate();
+            if (result > 0) {
+                System.out.println("remove file where fileHashName=" + deletedFile.getFileHashName());
+            }
+            transaction.commit();
+            return "[]";
+        } catch (Exception e) {
+            //log.error("Some fails with finding docFile with fileMd5Hash = {}", fileMd5Hash, e);
+            return null;
+        }
+    }
+
     /*
     public String getAllInputFieldsNamesFromFile(String fileName){
         String result = "";

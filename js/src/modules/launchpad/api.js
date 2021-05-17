@@ -38,3 +38,16 @@ export const loadFiles = (userName, token) =>
             Accept: 'application/json'
         })
         .then((response) => response.data);
+
+export const deleteFile = (groupId, fileHashName) =>
+    axios
+        .post(`http://localhost:8080/files/deleteUserFile`, {
+            groupId: groupId,
+            fileHashName: fileHashName,
+        }, {
+            dataType: 'JSON',
+            contentType:"application/json; charset=UTF-8",
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json'
+        })
+        .then((response) => response.data);

@@ -21,7 +21,7 @@ class FillerModalComponent extends React.Component {
                         <Modal.Title>{fileName}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <ModalFormComponent modalState={this.props.modalState} fileName={fileName} inputFieldsNames={inputFieldsNames} close={this.props.close} />
+                        <ModalFormComponent modalState={this.props.modalState} fileHashName={fileHashName} fileName={fileName} inputFieldsNames={inputFieldsNames} close={this.props.close} />
                     </Modal.Body>
 
                     {/*<Modal.Footer>

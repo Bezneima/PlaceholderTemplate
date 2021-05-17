@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/files")
@@ -78,11 +79,12 @@ public class FileController {
             method = RequestMethod.POST,
             consumes = {"multipart/form-data"}
     )
-    public String upload(@RequestParam MultipartFile file//,
-                         //@RequestParam String UploadedGroup,
-                         //@RequestParam boolean isTemplate
+    public RedirectView upload(@RequestParam MultipartFile file//,
+                               //@RequestParam String UploadedGroup,
+                               //@RequestParam boolean isTemplate
     ) {
-        return storageService.uploadFileToGroup(file, "1", false);
+                storageService.uploadFileToGroup(file, "1", false);
+        return new RedirectView("http://localhost:3000/");
     }
 
 
@@ -93,6 +95,16 @@ public class FileController {
     )
     public String getAllUserFiles(@RequestBody String requestBody) {
         return storageService.getAllUserFilesLinks(requestBody);
+
+    }
+
+    @CrossOrigin
+    @RequestMapping(
+            value = "/deleteUserFile",
+            method = RequestMethod.POST
+    )
+    public String deleteUserFile(@RequestBody String requestBody) {
+        return storageService.deleteUserFile(requestBody);
 
     }
 

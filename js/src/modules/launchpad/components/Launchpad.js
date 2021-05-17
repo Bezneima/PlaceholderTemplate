@@ -3,11 +3,12 @@ import {RouteComponentProps} from 'react-router-dom';
 import AuthFormComponent from "./AuthFormComponent";
 import LaunchpadHeader from "./LaunchpadHeader";
 import LaunchpadBody from "./LaunchpadBody";
-import {loadFiles} from "../actions/fileActions";
+import {deleteFile, loadFiles} from "../actions/fileActions";
 
 interface Props extends RouteComponentProps<{}> {
     loadUsers: () => { type: string };
     loadFiles: () => { type: string };
+    deleteFile: () => {type: string};
     authUser: () => { type: string };
     filesState: {
         files:[];
@@ -35,7 +36,7 @@ class Launchpad extends React.Component<Props> {
             return (
                 <div>
                     <LaunchpadHeader backURL={this.backURL} username={localStorage.getItem('login')}/>
-                    <LaunchpadBody filesState={filesState} userState={userState}/>
+                    <LaunchpadBody filesState={filesState} deleteFile={this.props.deleteFile} userState={userState}/>
                 </div>
             );
         else {

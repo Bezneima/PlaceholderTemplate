@@ -6,7 +6,7 @@ import {Action, Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {loadUsers,authUser} from "../actions/userActions";
 import {getUserInfo, getIsLoading, getFilesInfo} from "../selectors";
-import {loadFiles} from "../actions/fileActions";
+import {loadFiles, deleteFile} from "../actions/fileActions";
 
 const mapStateToProps = () => createStructuredSelector({
     isLoading: getIsLoading,
@@ -20,6 +20,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) =>
             loadUsers,
             loadFiles,
             authUser,
+            deleteFile,
         },
         dispatch,
     );

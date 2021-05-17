@@ -4,7 +4,7 @@ import axios from "axios";
 
 
 function ModalFormComponent(props) {
-    const {close, inputFieldsNames, modalState, fileName} = props;
+    const {close, inputFieldsNames, modalState, fileHashName, fileName} = props;
     let formParams = null;
     const allInputFields = JSON.parse(inputFieldsNames);
     const renderedInputFields = allInputFields.map((field, index) =>
@@ -14,12 +14,11 @@ function ModalFormComponent(props) {
                 (value) => {
                     let item;
                     item = modalState.find(obj => obj.key === field.key)
-                    if(item === undefined){
-                        modalState.push({key: field.key, value:field.value, valueTo: value});
-                    }
-                    else {
+                    if (item === undefined) {
+                        modalState.push({key: field.key, value: field.value, valueTo: value});
+                    } else {
                         modalState.pop();
-                        modalState.push({key: field.key, value:field.value, valueTo: value});
+                        modalState.push({key: field.key, value: field.value, valueTo: value});
                     }
                     console.log(modalState)
                 }
@@ -30,11 +29,11 @@ function ModalFormComponent(props) {
     return (
         <Form onSubmit={() => {
             let data = [];
-            modalState.forEach(item =>{
-                data.push({key:item.value, value:item.valueTo});
+            modalState.forEach(item => {
+                data.push({key: item.value, value: item.valueTo});
             });
-
-            axios.post(`http://localhost:8080/files/downloadFilledTemplate?groupName=1&fileHashName=A7C5BC1993F7534AACEAE425B38DBC8B&fileName=${fileName}`, data)
+            console.log("me", modalState);
+            axios.post(`http://localhost:8080/files/downloadFilledTemplate?groupName=1&fileHashName=${fileHashName}&fileName=${fileName}`, data)
                 .then(function (response) {
                     close();
                     console.log(response);
