@@ -77,7 +77,10 @@ function LaunchpadBody(props) {
                 </div>
                 <div>
                     {selectedFile &&
-                    <FillerModalComponent selectedFile={selectedFile} modalState={filesState.modalState} opened={opened}
+                    <FillerModalComponent selectedFile={selectedFile}
+                                          setOpened={setOpened}
+                                          modalState={filesState.modalState}
+                                          opened={opened}
                                           close={close}/>
                     }
                     {

@@ -1,10 +1,12 @@
-import React, {useEffect} from 'react';
-import {Button, ButtonToolbar, ControlLabel, Form, FormControl, FormGroup, HelpBlock} from "rsuite";
+import React, {useEffect, useState} from 'react';
+import {Button, ButtonToolbar, ControlLabel, Divider, Form, FormControl, FormGroup, HelpBlock} from "rsuite";
 import axios from "axios";
 
 
 function ModalFormComponent(props) {
     const {close, inputFieldsNames, modalState, fileHashName, fileName} = props;
+    const [forms, setForms] = useState([])
+    const [filesQuantity, setFilesQuantity] = useState(1)
     let formParams = null;
     const allInputFields = JSON.parse(inputFieldsNames);
     const renderedInputFields = allInputFields.map((field, index) =>
@@ -13,12 +15,12 @@ function ModalFormComponent(props) {
             <FormControl onChange={
                 (value) => {
                     let item;
-                    item = modalState.find(obj => obj.key === field.key)
+                    item = modalState[modalState.length-1].find(obj => obj.key === field.key)
                     if (item === undefined) {
-                        modalState.push({key: field.key, value: field.value, valueTo: value});
+                        modalState[modalState.length-1].push({key: field.key, value: field.value, valueTo: value});
                     } else {
-                        modalState.pop();
-                        modalState.push({key: field.key, value: field.value, valueTo: value});
+                        modalState[modalState.length-1].pop();
+                        modalState[modalState.length-1].push({key: field.key, value: field.value, valueTo: value});
                     }
                     console.log(modalState)
                 }
@@ -26,6 +28,10 @@ function ModalFormComponent(props) {
             <HelpBlock>Required</HelpBlock>
         </FormGroup>)
 
+    useEffect(() => {
+        modalState.push([]);
+        setForms([renderedInputFields, ...forms])
+    }, [])
     return (
         <Form onSubmit={() => {
             let data = [];
@@ -44,11 +50,24 @@ function ModalFormComponent(props) {
                 });
 
         }} layout="horizontal">
-            {renderedInputFields}
+            {forms}
             <FormGroup>
                 <ButtonToolbar>
                     <Button type="submit" appearance="primary">Submit</Button>
                     <Button onClick={close} appearance="default">Cancel</Button>
+                    <Button onClick={() => {
+                        modalState.push([]);
+                        setFilesQuantity(filesQuantity + 1)
+                        setForms([...forms,
+                                <>
+                                    <Divider/>
+                                    {filesQuantity+1}
+                                    {renderedInputFields}
+                                </>
+                            ]
+                        )
+                    }
+                    } appearance="default">New File</Button>
                 </ButtonToolbar>
             </FormGroup>
         </Form>)
