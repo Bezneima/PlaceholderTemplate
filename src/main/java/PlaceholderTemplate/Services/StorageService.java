@@ -4,10 +4,7 @@ import PlaceholderTemplate.Dao.*;
 import PlaceholderTemplate.DocxWorker;
 import PlaceholderTemplate.Exceptions.StorageException;
 import PlaceholderTemplate.FileUtils.MediaTypeUtils;
-import PlaceholderTemplate.dto.DocFiles;
-import PlaceholderTemplate.dto.Group;
-import PlaceholderTemplate.dto.TemplateFiles;
-import PlaceholderTemplate.dto.User;
+import PlaceholderTemplate.dto.*;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
@@ -178,23 +175,26 @@ public class StorageService {
     }
 
     public String downloadFilledTemplate(String groupName, String fields, String fileHashName, String fileName) throws Exception {
+        String outputPath = DigestUtils.md5Hex(fileHashName + java.util.Calendar.getInstance().getTime().toString()).toUpperCase();
+        CheckOrMakePath("temp/" + outputPath + "/notZip/");
         Map map = new HashMap();
         System.out.println(fields);
-        InputFields[] res = gson.fromJson(fields, InputFields[].class);
+        DocumentJSON[] res = gson.fromJson(fields, DocumentJSON[].class);
+        for (DocumentJSON doc : res) {
+            for (Changes change : doc.getChanges()) {
+                map.put(change.getKey(), change.getValueTo());
+            }
+            System.out.println(map);
+            // Сделать проверку на одинаковость названий файлов
+            Files.createFile(Paths.get("uploads/temp/" + outputPath + "/notZip/" + doc.getTitle()));
+            OutputStream os = new java.io.FileOutputStream("uploads/temp/" + outputPath + "/notZip/" + doc.getTitle());
 
-        for (InputFields item : res) {
-            map.put(item.key, item.value);
+            DocxWorker.replace(
+                    "uploads/group/" + groupName + "/docs/" + fileHashName,
+                    map,
+                    os);
+            os.close();
         }
-        System.out.println(map);
-        String outputPath = DigestUtils.md5Hex(fileHashName + java.util.Calendar.getInstance().getTime().toString()).toUpperCase();
-        Files.createFile(Paths.get("uploads/temp/" + outputPath));
-        OutputStream os = new java.io.FileOutputStream("uploads/temp/" + outputPath);
-
-        DocxWorker.replace(
-                "uploads/group/" + groupName + "/docs/" + fileHashName,
-                map,
-                os);
-        os.close();
         return outputPath;
     }
 

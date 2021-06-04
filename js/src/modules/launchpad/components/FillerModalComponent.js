@@ -3,17 +3,17 @@ import {Button, ButtonToolbar, Modal} from "rsuite";
 import ModalFormComponent from "./ModalFormComponent";
 
 
-
 class FillerModalComponent extends React.Component {
     constructor(props) {
         super(props);
     }
+
     componentDidMount() {
 
     }
 
     render() {
-        const {inputFieldsNames, fileHashName, groupId, path, fileName} = this.props.selectedFile;
+        const {inputFieldsNames, fileHashName, groupId, path, fileName, fileId} = this.props.selectedFile;
         return (
             <div className="modal-container">
                 <Modal show={this.props.opened} onHide={this.props.close}>
@@ -21,7 +21,15 @@ class FillerModalComponent extends React.Component {
                         <Modal.Title>{fileName}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <ModalFormComponent modalState={this.props.modalState} fileHashName={fileHashName} fileName={fileName} inputFieldsNames={inputFieldsNames} close={this.props.close} />
+                        <ModalFormComponent
+                            currentModalState={this.props.currentModalState}
+                            setCurrentModalState={this.props.setCurrentModalState}
+                            fileHashName={fileHashName}
+                            fileName={fileName}
+                            inputFieldsNames={inputFieldsNames}
+                            fileId = {fileId}
+                            close={this.props.close}
+                        />
                     </Modal.Body>
 
                     {/*<Modal.Footer>

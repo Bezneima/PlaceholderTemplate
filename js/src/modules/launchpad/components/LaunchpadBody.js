@@ -35,13 +35,11 @@ function downloadDoc(groupId, fileHash) {
 
 
 function LaunchpadBody(props) {
+
     const close = () => {
         setOpened(false);
-        filesState.modalState = [];
-        console.log(filesState.modalState)
     }
     const open = (file) => {
-        console.log(filesState.modalState)
         setSelectedFile(file);
         setOpened(true);
     }
@@ -50,6 +48,8 @@ function LaunchpadBody(props) {
     const {files} = filesState;
     const [opened, setOpened] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    let [currentModalState, setCurrentModalState] = useState(filesState.modalState);
+
     useEffect(() => {
         // Обновляем заголовок документа с помощью API браузера
 
@@ -60,7 +60,7 @@ function LaunchpadBody(props) {
             <div style={filesWrapper}>
                 <form action="http://localhost:8080/files/upload" method="post" id={"uploadedForm"}
                       encType="multipart/form-data">
-                    <h4 style={{marginBottom:"5px"}}>Загрузка шаблонов</h4>
+                    <h4 style={{marginBottom: "5px"}}>Загрузка шаблонов</h4>
                     <InputGroup>
                         <Input name="file" type="file"/>
                         <InputGroup.Button onClick={() => {
@@ -77,8 +77,12 @@ function LaunchpadBody(props) {
                 </div>
                 <div>
                     {selectedFile &&
-                    <FillerModalComponent selectedFile={selectedFile} modalState={filesState.modalState} opened={opened}
-                                          close={close}/>
+                    <FillerModalComponent
+                        selectedFile={selectedFile}
+                        currentModalState={currentModalState}
+                        setCurrentModalState={setCurrentModalState}
+                        opened={opened}
+                        close={close}/>
                     }
                     {
                         files.map((file, index) => {
