@@ -4,18 +4,21 @@ import {bindActionCreators} from "redux";
 import {Action, Dispatch} from "redux";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import {loadProfile} from "../actions/profileAction";
+import {loadGroups, loadProfile, loadUsersGroups, loadUsersNames} from "../actions/profileAction";
 import {getIsLoading, getProfileInfo} from "../selectors";
 
 const mapStateToProps = () => createStructuredSelector({
     isLoading: getIsLoading,
-    profileState: getProfileInfo
+    profileState: getProfileInfo,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) =>
     bindActionCreators(
         {
             loadProfile,
+            loadGroups,
+            loadUsersNames,
+            loadUsersGroups,
         },
         dispatch,
     );

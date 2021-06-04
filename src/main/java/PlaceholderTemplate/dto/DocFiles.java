@@ -1,5 +1,6 @@
 package PlaceholderTemplate.dto;
 
+import PlaceholderTemplate.Dao.DocFilesDao;
 import com.google.gson.annotations.SerializedName;
 
 import javax.persistence.*;
