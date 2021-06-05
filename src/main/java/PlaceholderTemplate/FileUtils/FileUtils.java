@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class FileUtils {
@@ -52,4 +52,26 @@ public class FileUtils {
         }
 
     }
+
+    public String zipDirectory(String zippedDirPath, String outZippedDirPath) throws IOException {
+        Path p = Files.createFile(Paths.get("uploads/temp/"+outZippedDirPath));
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
+            Path pp = Paths.get(zippedDirPath);
+            Files.walk(pp)
+                    .filter(path -> !Files.isDirectory(path))
+                    .forEach(path -> {
+                        ZipEntry zipEntry = new ZipEntry(pp.relativize(path).toString());
+                        try {
+                            zs.putNextEntry(zipEntry);
+                            Files.copy(path, zs);
+                            zs.closeEntry();
+                        } catch (IOException e) {
+                            System.err.println(e);
+                        }
+                    });
+        }
+        return outZippedDirPath;
+    }
+
+
 }

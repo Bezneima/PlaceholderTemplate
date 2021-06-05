@@ -24,7 +24,7 @@ function ModalFormComponent(props) {
             inputField['valueTo'] = '';
         })
         //console.log("targetArray",targetArray);
-        const emptyDocument = new Document(targetArray.length, fileName+" "+targetArray.length, changes);
+        const emptyDocument = new Document(targetArray.length, targetArray.length+" "+fileName, changes);
         targetArray.push(emptyDocument);
     }
 
@@ -107,7 +107,7 @@ function ModalFormComponent(props) {
                 .then(function (response) {
                     close();
                     // console.log(response);
-                    window.location.href = `http://localhost:8080/files/download?groupName=&isTemplate=true&fileHashName=${response.data}&fileName=${fileName}`
+                    window.location.href = `http://localhost:8080/files/download?groupName=&isTemplate=true&fileHashName=${response.data}&fileName=${fileName}.zip`
                 })
                 .catch(function (error) {
                     // console.log(error);

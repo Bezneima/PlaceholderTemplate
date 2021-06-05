@@ -3,6 +3,7 @@ package PlaceholderTemplate.Services;
 import PlaceholderTemplate.Dao.*;
 import PlaceholderTemplate.DocxWorker;
 import PlaceholderTemplate.Exceptions.StorageException;
+import PlaceholderTemplate.FileUtils.FileUtils;
 import PlaceholderTemplate.FileUtils.MediaTypeUtils;
 import PlaceholderTemplate.dto.*;
 import com.google.gson.Gson;
@@ -43,6 +44,7 @@ public class StorageService {
     private final GroupDao groupDao;
     private final TemplateFilesDao templateFilesDao;
     private final DocFilesDao docFilesDao;
+    FileUtils fileUtils;
     private static final Logger log = LoggerFactory.getLogger(StorageService.class);
     private final Gson gson = new Gson();
 
@@ -50,11 +52,13 @@ public class StorageService {
     StorageService(@Autowired UserDao userDao,
                    @Autowired DocFilesDao docFilesDao,
                    @Autowired TemplateFilesDao templateFilesDao,
-                   @Autowired GroupDao groupDao) {
+                   @Autowired GroupDao groupDao,
+                   @Autowired FileUtils FileUtils) {
         this.usersDao = userDao;
         this.docFilesDao = docFilesDao;
         this.templateFilesDao = templateFilesDao;
         this.groupDao = groupDao;
+        this.fileUtils = FileUtils;
     }
 
     public String uploadFileToGroup(MultipartFile file, String UploadeGroupId, boolean isTemplate) {
@@ -182,7 +186,7 @@ public class StorageService {
         DocumentJSON[] res = gson.fromJson(fields, DocumentJSON[].class);
         for (DocumentJSON doc : res) {
             for (Changes change : doc.getChanges()) {
-                map.put(change.getKey(), change.getValueTo());
+                map.put(change.getValue(), change.getValueTo());
             }
             System.out.println(map);
             // Сделать проверку на одинаковость названий файлов
@@ -195,7 +199,8 @@ public class StorageService {
                     os);
             os.close();
         }
-        return outputPath;
+        //CheckOrMakePath("temp/" + outputPath + "/zip");
+        return fileUtils.zipDirectory("uploads/temp/"+ outputPath + "/notZip", outputPath + "/zip");
     }
 
     public String getAllUserFilesLinks(String requestBody) {
