@@ -100,7 +100,16 @@ public class UserDao {
             return null;
         }
     }
-
+    public List<String> findAllUsers(){
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            Query query = session.createQuery("select distinct userName FROM User");
+            List<String> usersNames = query.list();
+            return usersNames;
+        } catch (Exception e) {
+            log.error("Some fails with finding groups", e);
+            return null;
+        }
+    }
 
     public boolean checkToken(String login, String token) {
         User user = findByName(login);

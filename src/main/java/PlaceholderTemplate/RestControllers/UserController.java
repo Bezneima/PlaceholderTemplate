@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -36,6 +38,30 @@ public class UserController {
     public String addUser(@RequestParam String userName, @RequestParam String role) {
         User user = new User(role, userName);
         return userService.saveUser(user);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/getAllExistingGroupsNames", method = RequestMethod.POST)
+    public String getAllExistingGroupsNames (@RequestBody String userToken) {
+        return userService.getAllExistingGroupsNames();
+    }
+    @CrossOrigin
+    @RequestMapping(value = "/getAllUsers", method = RequestMethod.POST)
+    public String getAllUsers (@RequestBody String userToken) {
+        return userService.getAllUsers();
+    }
+    @CrossOrigin
+    @RequestMapping(value = "/getAllUsersGroups", method = RequestMethod.POST)
+    public String getAllUsersGroups (@RequestParam String userName) {
+        return userService.getAllUsersGroups(userName);
+    }
+    @CrossOrigin
+    @RequestMapping(value = "/setUserToGroups", method = RequestMethod.POST)
+    public String setUserToGroups (@RequestParam String userName,
+                                   @RequestBody String groups) {
+        List<String> groupsNames = new ArrayList<String>();
+        groupsNames = userService.setUserToGroups(userName, groups);
+        return "User " + userName + " added to " + groupsNames;
     }
 
     @CrossOrigin
