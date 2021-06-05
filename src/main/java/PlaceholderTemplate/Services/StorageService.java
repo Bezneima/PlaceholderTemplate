@@ -202,7 +202,7 @@ public class StorageService {
 
         User requestedUser = gson.fromJson(requestBody, User.class);
         if (usersDao.checkToken(requestedUser.getUserName(), requestedUser.getLastUserToken())) {
-            List<Group> userGroups = groupDao.findAllUsersGroup("member_name");
+            List<Group> userGroups = groupDao.findAllUsersGroup(requestedUser.getUserName());
             List<DocFiles> fileLinks = new LinkedList<>();
             userGroups.forEach(group -> {
                 fileLinks.addAll(docFilesDao.getAllFileLinksByGroupId(group.getGroupId()));

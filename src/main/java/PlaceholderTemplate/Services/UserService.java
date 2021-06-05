@@ -1,8 +1,12 @@
 package PlaceholderTemplate.Services;
 
+import PlaceholderTemplate.Dao.GroupDao;
 import PlaceholderTemplate.Dao.UserDao;
 import PlaceholderTemplate.FileUtils.MediaTypeUtils;
+import PlaceholderTemplate.dto.Group;
+import PlaceholderTemplate.dto.ProfileGroups;
 import PlaceholderTemplate.dto.User;
+import PlaceholderTemplate.dto.Users;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -10,6 +14,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -26,6 +31,8 @@ import javax.servlet.ServletContext;
 @Service
 public class UserService {
     private final UserDao usersDao = new UserDao();
+    private final GroupDao groupDao = new GroupDao();
+    private final Gson gson = new Gson();
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private ServletContext servletContext;
@@ -87,6 +94,49 @@ public class UserService {
                 .contentType(mediaType)
                 .contentLength(file.length())
                 .body(resource);
+    }
+    public String getAllExistingGroupsNames (){
+        List<ProfileGroups> res = new ArrayList<ProfileGroups>();
+        groupDao.findAllExistingGroupsNames().forEach(groupName ->{
+            res.add(new ProfileGroups(groupName,groupName));
+        });
+        return gson.toJson(res);
+    }
+    public String getAllUsersGroups (String userName){
+        List<ProfileGroups> res = new ArrayList<ProfileGroups>();
+        groupDao.findAllUsersGroup(userName).forEach(group -> {
+            res.add(new ProfileGroups(group.getGroupName(), group.getGroupName()));
+        });
+        return gson.toJson(res);
+    }
+
+    public List<String> setUserToGroups(String userName, String requestBody){
+        List<String> groupsNamesToSetUser = new ArrayList<String>();
+        ProfileGroups[] usersGroups = gson.fromJson(requestBody, ProfileGroups[].class);
+        for (ProfileGroups group : usersGroups) {
+            groupsNamesToSetUser.add(group.getValue());
+        }
+        groupDao.findAllUsersGroup(userName).forEach(group -> {
+            groupDao.deleteUserFromGroup(userName, group.getGroupName());
+        });
+        groupsNamesToSetUser.forEach(groupName -> {
+            Group group = new Group();
+            group.setGroupId(groupDao.getGroupId(groupName).get(0));
+            group.setGroupName(groupName);
+            group.setMemberName(userName);
+            group.setGroupAdmin(false);
+            groupDao.saveUserToGroup(group);
+        });
+
+        return groupsNamesToSetUser;
+    }
+
+    public String getAllUsers (){
+        List<Users> res = new ArrayList<Users>();
+        usersDao.findAllUsers().forEach(userName ->{
+            res.add(new Users(userName, userName));
+        });
+        return gson.toJson(res);
     }
 
     public void deleteUser(User user) {
