@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -112,15 +113,15 @@ public class UserService {
 
     public List<String> setUserToGroups(String userName, String requestBody){
         List<String> groupsNamesToSetUser = new ArrayList<String>();
-        ProfileGroups[] usersGroups = gson.fromJson(requestBody, ProfileGroups[].class);
-        for (ProfileGroups group : usersGroups) {
-            groupsNamesToSetUser.add(group.getValue());
-        }
+        String[] usersGroups = gson.fromJson(requestBody, String[].class);
+        //ProfileGroups[] usersGroups = gson.fromJson(requestBody, ProfileGroups[].class);
+        groupsNamesToSetUser.addAll(Arrays.asList(usersGroups));
         groupDao.findAllUsersGroup(userName).forEach(group -> {
             groupDao.deleteUserFromGroup(userName, group.getGroupName());
         });
         groupsNamesToSetUser.forEach(groupName -> {
             Group group = new Group();
+            //group.setGroupId(1);
             group.setGroupId(groupDao.getGroupId(groupName).get(0));
             group.setGroupName(groupName);
             group.setMemberName(userName);
@@ -137,6 +138,20 @@ public class UserService {
             res.add(new Users(userName, userName));
         });
         return gson.toJson(res);
+    }
+    public void addGroup(String groupName, String userName){
+        Group group = new Group();
+        //group.setGroupId(groupDao.getGroupId(groupName).get(0));
+        group.setGroupId(groupDao.countOfUniqueGroups() + 1);
+        group.setGroupName(groupName);
+        group.setMemberName(userName);
+        group.setGroupAdmin(true);
+        groupDao.saveUserToGroup(group);
+        group.setGroupId(groupDao.countOfUniqueGroups());
+        group.setGroupName(groupName);
+        group.setMemberName(null);
+        group.setGroupAdmin(false);
+        groupDao.saveUserToGroup(group);
     }
 
     public void deleteUser(User user) {

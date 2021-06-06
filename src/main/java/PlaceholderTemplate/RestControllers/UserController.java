@@ -45,6 +45,14 @@ public class UserController {
     public String getAllExistingGroupsNames (@RequestBody String userToken) {
         return userService.getAllExistingGroupsNames();
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/addGroup", method = RequestMethod.POST)
+    public String addGroup (@RequestParam String groupName, @RequestParam String userName) {
+       userService.addGroup(groupName, userName);
+       return "Created group " + groupName + " with admin " + userName;
+    }
+
     @CrossOrigin
     @RequestMapping(value = "/getAllUsers", method = RequestMethod.POST)
     public String getAllUsers (@RequestBody String userToken) {

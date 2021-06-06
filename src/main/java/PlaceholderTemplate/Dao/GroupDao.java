@@ -60,6 +60,16 @@ public class GroupDao {
             return null;
         }
     }
+    public Integer countOfUniqueGroups(){
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            Query query = session.createQuery("select distinct groupName FROM Group");
+            List<Integer> groups = query.list();
+            return groups.size();
+        } catch (Exception e) {
+            log.error("Some fails with finding groups", e);
+            return null;
+        }
+    }
     public void saveUserToGroup(Group group){
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();

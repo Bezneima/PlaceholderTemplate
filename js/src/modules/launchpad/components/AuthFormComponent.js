@@ -32,7 +32,7 @@ function AuthFormComponent(props) {
                 <Form fluid>
                     <FormGroup>
                         <ControlLabel>Имя пользователя</ControlLabel>
-                        <FormControl style={FormControlStyle} placeholder="SeminaLolia" name="login"
+                        <FormControl style={FormControlStyle} placeholder="login" name="login"
                                      onChange={(value) => {
                                          setLogin(value);
                                      }} required/>

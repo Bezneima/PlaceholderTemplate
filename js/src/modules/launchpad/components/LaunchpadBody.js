@@ -97,9 +97,10 @@ function LaunchpadBody(props) {
                                         <Dropdown.Item onSelect={() => {
                                             open(file)
                                         }} eventKey="b">Заполнить</Dropdown.Item>
-                                        <Dropdown.Item eventKey="c">Rest API</Dropdown.Item>
+                                        {/*<Dropdown.Item eventKey="c">Rest API</Dropdown.Item>*/}
                                         <Dropdown.Item eventKey="d" onSelect={() => {
-                                            deleteFile(file.groupId, file.fileHashName)
+                                            deleteFile(file.groupId, file.fileHashName);
+                                            window.location.href = '/'
                                         }}>Удалить</Dropdown.Item>
                                     </Dropdown>
                                 </div>

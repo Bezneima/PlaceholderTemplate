@@ -10,7 +10,7 @@ public class Group {
 
     @SerializedName("group_id")
     @Column(name = "group_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer groupId;
     @SerializedName("group_name")
